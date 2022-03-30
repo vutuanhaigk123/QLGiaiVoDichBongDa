@@ -1,0 +1,77 @@
+package view;
+import java.awt.*;
+
+import javax.swing.*;
+
+import mdlaf.MaterialLookAndFeel;
+import mdlaf.themes.JMarsDarkTheme;
+
+public class StartProgram {
+	
+	public static final String FOOTBALL_TEAM_TAB = "Football team";
+	public static final String COMPETITION_TAB = "Competition";
+	public static final String REPORT_TAB = "Report";
+	public static final String REGULATION_TAB = "Regulation";
+	public static final String FOOTBALL_PLAYER_TAB = "Football Player";
+	
+	static {
+		try {
+			UIManager.setLookAndFeel(new MaterialLookAndFeel(new JMarsDarkTheme()));
+		} catch (UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+	}
+
+	static void add(JTabbedPane tabbedPane, String label) {
+		JPanel panel = null;
+		switch (label) {
+			case FOOTBALL_TEAM_TAB:
+				panel = new FootballTeamPanel();
+				break;
+				
+			case FOOTBALL_PLAYER_TAB:
+				panel = new FootballPlayerPanel();
+				break;
+				
+			case COMPETITION_TAB:
+				panel = new CompetitionMatchPanel();
+				break;
+				
+			case REPORT_TAB:
+				panel = new ReportPanel();
+				break;
+				
+			case REGULATION_TAB:
+				panel = new RegulationPanel();
+				break;
+	
+			default:
+				break;
+		}
+		tabbedPane.addTab(label, panel);
+	}
+
+	public static void main(String args[]) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				JFrame frame = new JFrame("National Football Championship Manager");
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+				JTabbedPane tabbedPane = new JTabbedPane();
+				tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+				String titles[] = {FOOTBALL_TEAM_TAB, FOOTBALL_PLAYER_TAB, 
+						COMPETITION_TAB, REPORT_TAB, REGULATION_TAB};
+				for (int i = 0, n = titles.length; i < n; i++) {
+					add(tabbedPane, titles[i]);
+				}
+
+				frame.add(tabbedPane, BorderLayout.CENTER);
+				frame.setMinimumSize(new Dimension(900, 400));
+				frame.setSize(1100, 500);
+				frame.setLocationRelativeTo(null);
+				frame.setVisible(true);
+			}
+		});
+		
+	}
+}
