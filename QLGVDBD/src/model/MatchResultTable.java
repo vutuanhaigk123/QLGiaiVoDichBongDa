@@ -1,8 +1,5 @@
 package model;
 
-import java.util.Vector;
-
-import javax.swing.ImageIcon;
 
 public class MatchResultTable extends TableModel{
 
@@ -15,16 +12,17 @@ public class MatchResultTable extends TableModel{
 		dtm.addColumn("Thời điểm");
 		dtm.addColumn("");
 		
-		for (int i = 0; i < 10; i++) {
-			Vector<Object> v = new Vector<>();
-			v.add(i);
-			v.add(i);
-			v.add(i);
-			v.add(i);
-			v.add(i);
-			v.add(new ImageIcon("/imgs/blank.png"));
-			dtm.addRow(v);
-		}
+//		for (int i = 0; i < 10; i++) {
+//			Vector<Object> v = new Vector<>();
+//			v.add(i);
+//			v.add(i);
+//			v.add(i);
+//			v.add(i);
+//			v.add(i);
+//			v.add(new ImageIcon("/imgs/blank.png"));
+//			dtm.addRow(v);
+//		}
+		super.addEmptyRow(10);
 		super.bindingDeleteBtn("Are you sure to delete this match result?");
 		
 		//tblPkg.setAutoCreateRowSorter(true);

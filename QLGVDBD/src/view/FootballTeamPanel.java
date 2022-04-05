@@ -1,5 +1,9 @@
 package view;
 
+import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.components.DatePickerSettings;
+import com.github.lgooddatepicker.components.DatePickerSettings.DateArea;
+
 import javax.swing.*;
 
 import java.awt.*;
@@ -8,6 +12,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+
 
 @SuppressWarnings("serial")
 public class FootballTeamPanel extends JPanel
@@ -34,6 +41,7 @@ public class FootballTeamPanel extends JPanel
 										panel_3.add(btnInfo);
 										btnInfo.setFocusPainted( false );
 										btnInfo.setToolTipText("Information");
+										btnInfo.setVisible(false);
 										
 												JButton btnSaveChanges = new JButton(new ImageIcon("resources/save.png"));
 												panel_3.add(btnSaveChanges);
@@ -44,9 +52,32 @@ public class FootballTeamPanel extends JPanel
 														panel_3.add(btnRegister);
 														btnRegister.setFocusPainted( false );
 														btnRegister.setToolTipText("Register a football team");
+														
+														DatePickerSettings dateSettings = new DatePickerSettings();
+														dateSettings.setColor(DateArea.BackgroundMonthAndYearMenuLabels, Color.DARK_GRAY);
+													    dateSettings.setColor(DateArea.BackgroundTodayLabel, Color.DARK_GRAY);
+													    dateSettings.setColor(DateArea.BackgroundClearLabel, Color.DARK_GRAY);
+													    dateSettings.setColor(DateArea.BackgroundCalendarPanelLabelsOnHover, Color.ORANGE);
+													    dateSettings.setColor(DateArea.CalendarBackgroundSelectedDate, Color.ORANGE);
+													    DatePicker datePicker = new DatePicker(dateSettings);
+													    panel_3.add(datePicker);			
+										
+														
 		btnInfo.addActionListener(this);
 		
-		
+		panel_1.getDtm().addTableModelListener(new TableModelListener() {
+			
+			@Override
+			public void tableChanged(TableModelEvent e) {				
+				int selectedRow = panel_1.getTable().getSelectedRowCount();
+				if(selectedRow == 1){
+					btnInfo.setVisible(true);
+				}
+				else {
+					btnInfo.setVisible(false);
+				}
+			}
+		});
 		
 		
 

@@ -1,9 +1,11 @@
 package model;
 
 import java.awt.event.ActionEvent;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -31,6 +33,11 @@ public abstract class TableModel {
 					JTable table = (JTable)e.getSource();
 					int modelRow = Integer.valueOf( e.getActionCommand() );
 					((DefaultTableModel)table.getModel()).removeRow(modelRow);
+					int startCheckIndex = modelRow + 1;
+					for(int i = modelRow; i < table.getRowCount(); i++){
+						table.setValueAt(startCheckIndex, i, 0);
+						startCheckIndex++;
+					}
 				}				
 			}
 		};
@@ -44,6 +51,24 @@ public abstract class TableModel {
 
 	public JTable getTable() {
 		return table;
+	}
+	
+	public void addEmptyRow(int quantity){
+		for(int j = 0; j < quantity; j++){
+			Vector<Object> row = new Vector<>();
+			int n = table.getColumnCount() - 1;
+			row.add((table.getRowCount() + 1) + "");
+			for(int i = 1; i < n; i++){
+				if(i == n){
+					row.add(new ImageIcon("/imgs/blank.png"));
+				}
+				else{
+					row.add("");
+				}
+			}
+			dtm.addRow(row);
+		}
+		
 	}
 
 }

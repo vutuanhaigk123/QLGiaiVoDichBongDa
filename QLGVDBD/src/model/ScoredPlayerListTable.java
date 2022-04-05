@@ -1,7 +1,5 @@
 package model;
 
-import java.util.Vector;
-
 public class ScoredPlayerListTable extends TableModel{
 
 	public ScoredPlayerListTable(){
@@ -12,15 +10,16 @@ public class ScoredPlayerListTable extends TableModel{
 		dtm.addColumn("Loại cầu thủ");
 		dtm.addColumn("Số bàn thắng");
 		
-		for (int i = 0; i < 10; i++) {
-			Vector<Object> v = new Vector<>();
-			v.add(i);
-			v.add(i);
-			v.add(i);
-			v.add(i);
-			v.add(i);
-			dtm.addRow(v);
-		}
+//		for (int i = 0; i < 10; i++) {
+//			Vector<Object> v = new Vector<>();
+//			v.add(i);
+//			v.add(i);
+//			v.add(i);
+//			v.add(i);
+//			v.add(i);
+//			dtm.addRow(v);
+//		}
+		super.addEmptyRow(10);
 		
 		//tblPkg.setAutoCreateRowSorter(true);
 //		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(dtm);

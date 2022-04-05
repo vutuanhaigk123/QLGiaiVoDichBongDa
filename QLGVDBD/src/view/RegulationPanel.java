@@ -217,6 +217,8 @@ public class RegulationPanel extends JPanel {
 		textField_3.setColumns(10);
 		
 		JPanel panel_24 = new JPanel();
+		FlowLayout flowLayout_20 = (FlowLayout) panel_24.getLayout();
+		flowLayout_20.setAlignment(FlowLayout.TRAILING);
 		panel_1.add(panel_24);
 		
 		JLabel lblTuiTia = new JLabel("Tuổi tối đa của cầu thủ:");

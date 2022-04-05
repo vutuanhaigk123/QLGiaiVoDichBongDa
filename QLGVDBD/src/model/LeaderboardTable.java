@@ -1,7 +1,5 @@
 package model;
 
-import java.util.Vector;
-
 public class LeaderboardTable extends TableModel{
 
 	public LeaderboardTable(){
@@ -14,18 +12,19 @@ public class LeaderboardTable extends TableModel{
 		dtm.addColumn("Hiệu số");
 		dtm.addColumn("Hạng");
 		
-		for (int i = 0; i < 10; i++) {
-			Vector<Object> v = new Vector<>();
-			v.add(i);
-			v.add(i);
-			v.add(i);
-			v.add(i);
-			v.add(i);
-			v.add(i);
-			v.add(i);
-			dtm.addRow(v);
-		}
-		
+//		for (int i = 0; i < 10; i++) {
+//			Vector<Object> v = new Vector<>();
+//			v.add(i);
+//			v.add(i);
+//			v.add(i);
+//			v.add(i);
+//			v.add(i);
+//			v.add(i);
+//			v.add(i);
+//			dtm.addRow(v);
+//		}
+
+		super.addEmptyRow(10);
 		//tblPkg.setAutoCreateRowSorter(true);
 //		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(dtm);
 //		tblPkg.setRowSorter(sorter);
