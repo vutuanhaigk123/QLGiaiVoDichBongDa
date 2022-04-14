@@ -12,6 +12,14 @@ import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 
+import viewmodel.CompetitionScheduleTable;
+import viewmodel.FootballPlayerListTable;
+import viewmodel.FootballTeamListTable;
+import viewmodel.FootballTeamProfileTable;
+import viewmodel.LeaderboardTable;
+import viewmodel.MatchResultTable;
+import viewmodel.ScoredPlayerListTable;
+import viewmodel.TableModel;
 import model.*;
 
 @SuppressWarnings("serial")

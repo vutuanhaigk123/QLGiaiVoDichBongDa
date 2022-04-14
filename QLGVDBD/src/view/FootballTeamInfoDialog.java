@@ -9,16 +9,19 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
-import model.FootballTeamProfileTable;
+import viewmodel.FootballTeamProfileTable;
 
 @SuppressWarnings("serial")
 public class FootballTeamInfoDialog extends JDialog {
@@ -46,6 +49,7 @@ public class FootballTeamInfoDialog extends JDialog {
 	private JTextField txtStadium;
 	private JButton btnAdd, btnSave, btnEdit;
 	private FootballTeamProfileTable customTableModel;
+	private TablePanel tablePanel;
 
 	public FootballTeamInfoDialog() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -140,19 +144,21 @@ public class FootballTeamInfoDialog extends JDialog {
 			}
 		}
 		{
-			TablePanel panel = new TablePanel(TablePanel.FOOTBALL_TEAM_PROFILE_TABLE);
-			contentPanel.add(panel, BorderLayout.CENTER);
-			customTableModel = ((FootballTeamProfileTable)panel.getTblModel());
+			tablePanel = new TablePanel(TablePanel.FOOTBALL_TEAM_PROFILE_TABLE);
+			contentPanel.add(tablePanel, BorderLayout.CENTER);
+			customTableModel = ((FootballTeamProfileTable)tablePanel.getTblModel());
 			customTableModel.setEnable(false);
+			txtTeamName.setEnabled(false);
+			txtStadium.setEnabled(false);
 			
 			btnAdd.addActionListener(new ActionListener() {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					panel.addEmptyRow(1);
-					int lastIndex = panel.getTable().getRowCount() - 1;
-					panel.getTable().setRowSelectionInterval(lastIndex, lastIndex);
-					panel.scrollToEnd();
+					tablePanel.addEmptyRow(1);
+					int lastIndex = tablePanel.getTable().getRowCount() - 1;
+					tablePanel.getTable().setRowSelectionInterval(lastIndex, lastIndex);
+					tablePanel.scrollToEnd();
 				}
 			});
 			btnSave.addActionListener(new ActionListener() {
@@ -163,6 +169,20 @@ public class FootballTeamInfoDialog extends JDialog {
 					btnEdit.setVisible(true);
 					btnAdd.setVisible(false);
 					btnSave.setVisible(false);
+					txtTeamName.setEnabled(false);
+					txtStadium.setEnabled(false);
+					HashMap<String, Integer> idList = customTableModel.getIdList();
+					JTable table = tablePanel.getTable();
+					for (int i = 0; i < table.getRowCount(); i++) {
+						if(!isEmptyRow(i)){
+							String typeOfPlayerStr = (String) table.getValueAt(i, 3);
+							System.out.println(table.getValueAt(i, 1) + " "
+									+ table.getValueAt(i, 2) + " ;"
+									+ table.getValueAt(i, 3) + "; "
+									+ idList.get(typeOfPlayerStr));
+						}
+						
+					}
 				}
 			});
 			btnEdit.addActionListener(new ActionListener() {
@@ -173,11 +193,23 @@ public class FootballTeamInfoDialog extends JDialog {
 					btnAdd.setVisible(true);
 					btnSave.setVisible(true);
 					btnEdit.setVisible(false);
+					txtTeamName.setEnabled(true);
+					txtStadium.setEnabled(true);
 				}
 			});
 			
 		}
 		setLocationRelativeTo(null);
+	}
+	
+	private boolean isEmptyRow(int i){
+		JTable table = tablePanel.getTable();
+		if(table.getValueAt(i, 1).toString().trim().isEmpty() 
+				|| table.getValueAt(i, 3).toString().trim().isEmpty()
+				|| table.getValueAt(i, 2).toString().trim().isEmpty()){
+			return true;
+		}
+		return false;
 	}
 
 }

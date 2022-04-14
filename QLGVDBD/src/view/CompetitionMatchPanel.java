@@ -10,7 +10,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import model.CompetitionScheduleTable;
+import viewmodel.CompetitionScheduleTable;
 
 @SuppressWarnings("serial")
 public class CompetitionMatchPanel extends JPanel 
