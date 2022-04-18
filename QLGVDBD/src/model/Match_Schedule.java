@@ -5,14 +5,14 @@ import java.sql.Date;
 public class Match_Schedule {
 
 	private int id;
-	private String round;
+	private int round;
 	private Date time;
 	private Team firstTeam, secondTeam;
 	private String stadium;
 	private Result matchResult;
 	
 	
-	public Match_Schedule(int id, String round, Date time, Team firstTeam,
+	public Match_Schedule(int id, int round, Date time, Team firstTeam,
 			Team secondTeam, String stadium, Result matchResult) {
 		super();
 		this.id = id;
@@ -30,10 +30,10 @@ public class Match_Schedule {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getRound() {
+	public int getRound() {
 		return round;
 	}
-	public void setRound(String round) {
+	public void setRound(int round) {
 		this.round = round;
 	}
 	public Date getTime() {

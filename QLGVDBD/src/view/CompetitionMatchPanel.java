@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 import viewmodel.CompetitionScheduleTable;
 
@@ -64,6 +66,7 @@ public class CompetitionMatchPanel extends JPanel
 		btnInfo.setFocusPainted( false );
 		btnInfo.setToolTipText("Add result match");
 		btnInfo.addActionListener(this);
+		btnInfo.setVisible(false);
 		
 		btnEdit = new JButton("Edit", new ImageIcon("resources/edit.png"));
 		btnEdit.setFocusPainted( false );
@@ -75,6 +78,21 @@ public class CompetitionMatchPanel extends JPanel
 		panel_21.add(btnAdd);
 		panel_21.add(btnEdit);
 		clickSave();
+		
+		tablePanel.getDtm().addTableModelListener(new TableModelListener() {
+
+			@Override
+			public void tableChanged(TableModelEvent e) {				
+				int selectedRow = tablePanel.getTable().getSelectedRowCount();
+				if(selectedRow == 1){
+					btnInfo.setVisible(true);
+				}
+				else {
+					btnInfo.setVisible(false);
+				}
+			}
+		});
+		
 	}
 
 	@Override

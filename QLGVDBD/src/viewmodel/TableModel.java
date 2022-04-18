@@ -16,9 +16,16 @@ public abstract class TableModel {
 	protected JTable table;
 	protected boolean isEnable;
 
+	@SuppressWarnings("serial")
 	public TableModel(){
 		dtm = new DefaultTableModel();
-		table = new JTable(dtm);
+		table = new JTable(dtm){
+
+	        public boolean isCellEditable(int row, int column) {                
+	                return column != 0;               
+	        };
+	    };
+	    table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		isEnable = false;
 	}
 	
@@ -34,12 +41,19 @@ public abstract class TableModel {
 				if(dialogResult == JOptionPane.YES_OPTION){
 					JTable table = (JTable)e.getSource();
 					int modelRow = Integer.valueOf( e.getActionCommand() );
-					((DefaultTableModel)table.getModel()).removeRow(modelRow);
-					int startCheckIndex = modelRow + 1;
-					for(int i = modelRow; i < table.getRowCount(); i++){
-						table.setValueAt(startCheckIndex, i, 0);
-						startCheckIndex++;
+					if(canDelete(modelRow)){
+						((DefaultTableModel)table.getModel()).removeRow(modelRow);
+						int startCheckIndex = modelRow + 1;
+						deleteObject(modelRow);
+						for(int i = modelRow; i < table.getRowCount(); i++){
+							table.setValueAt(startCheckIndex, i, 0);
+							startCheckIndex++;
+						}
 					}
+					else{
+						showErrDelete();
+					}
+					
 				}				
 			}
 		};
@@ -76,5 +90,14 @@ public abstract class TableModel {
 	public boolean isEnable() {
 		return isEnable;
 	}
+	public abstract Object getSelectedItem();
 
+	public abstract void addEmptyObject();
+	
+	public abstract void deleteObject(int modelRow);
+	
+	public abstract boolean canDelete(int index);
+	
+	public abstract void showErrDelete();
+	
 }

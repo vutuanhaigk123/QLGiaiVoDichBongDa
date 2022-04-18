@@ -9,11 +9,14 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import viewmodel.FootballPlayerListTable;
+
 @SuppressWarnings("serial")
 public class FootballPlayerPanel extends JPanel {
 
 	private JButton btnSearch;
 	private JTextField txtSearch;
+	private TablePanel panel_1;
 
 	public FootballPlayerPanel() {
 		setLayout(new GridLayout(1, 0, 0, 50));
@@ -22,7 +25,7 @@ public class FootballPlayerPanel extends JPanel {
 		add(panel);
 		panel.setLayout(new GridLayout(1, 0, 0, 0));
 
-		TablePanel panel_1 = new TablePanel(TablePanel.FOOTBALL_PLAYER_LIST_TABLE);
+		panel_1 = new TablePanel(TablePanel.FOOTBALL_PLAYER_LIST_TABLE);
 		panel.add(panel_1);
 		
 				JPanel panel_3 = new JPanel();
@@ -48,6 +51,10 @@ public class FootballPlayerPanel extends JPanel {
 
 
 
+	}
+	
+	public void updateData(){
+		((FootballPlayerListTable)(panel_1.getTblModel())).getData();
 	}
 
 }

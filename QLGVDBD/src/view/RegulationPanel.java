@@ -20,16 +20,16 @@ import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
 public class RegulationPanel extends JPanel {
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
-	private JTextField textField_6;
-	private JTextField textField_7;
-	private JTextField textField_8;
-	private JTextField textField_9;
+	private JTextField txtMinAge;
+	private JTextField txtMaxPlayerAge;
+	private JTextField txtWinScore;
+	private JTextField txtTiredScore;
+	private JTextField txtDefeatScore;
+	private JTextField txtMinNumOfPlayers;
+	private JTextField txtMaxNumOfPlayer;
+	private JTextField txtMaxAbroadPlayer;
+	private JTextField txtNumOfScored;
+	private JTextField txtMaxTimeScored;
 	private JButton btnEdit, btnSave;
 
 	/**
@@ -93,9 +93,9 @@ public class RegulationPanel extends JPanel {
 		flowLayout_8.setAlignment(FlowLayout.LEADING);
 		panel_1.add(panel_2);
 		
-		textField = new JTextField();
-		panel_2.add(textField);
-		textField.setColumns(10);
+		txtMinAge = new JTextField();
+		panel_2.add(txtMinAge);
+		txtMinAge.setColumns(10);
 		
 		JPanel panel_4 = new JPanel();
 		FlowLayout flowLayout_2 = (FlowLayout) panel_4.getLayout();
@@ -110,9 +110,9 @@ public class RegulationPanel extends JPanel {
 		flowLayout_9.setAlignment(FlowLayout.LEADING);
 		panel_1.add(panel_5);
 		
-		textField_6 = new JTextField();
-		panel_5.add(textField_6);
-		textField_6.setColumns(10);
+		txtMaxNumOfPlayer = new JTextField();
+		panel_5.add(txtMaxNumOfPlayer);
+		txtMaxNumOfPlayer.setColumns(10);
 		
 		JPanel panel_6 = new JPanel();
 		FlowLayout flowLayout_3 = (FlowLayout) panel_6.getLayout();
@@ -127,9 +127,9 @@ public class RegulationPanel extends JPanel {
 		flowLayout_10.setAlignment(FlowLayout.LEADING);
 		panel_1.add(panel_7);
 		
-		textField_5 = new JTextField();
-		panel_7.add(textField_5);
-		textField_5.setColumns(10);
+		txtMinNumOfPlayers = new JTextField();
+		panel_7.add(txtMinNumOfPlayers);
+		txtMinNumOfPlayers.setColumns(10);
 		
 		JPanel panel_8 = new JPanel();
 		FlowLayout flowLayout_4 = (FlowLayout) panel_8.getLayout();
@@ -144,9 +144,9 @@ public class RegulationPanel extends JPanel {
 		flowLayout_11.setAlignment(FlowLayout.LEADING);
 		panel_1.add(panel_9);
 		
-		textField_8 = new JTextField();
-		panel_9.add(textField_8);
-		textField_8.setColumns(10);
+		txtNumOfScored = new JTextField();
+		panel_9.add(txtNumOfScored);
+		txtNumOfScored.setColumns(10);
 		
 		JPanel panel_10 = new JPanel();
 		FlowLayout flowLayout_5 = (FlowLayout) panel_10.getLayout();
@@ -161,9 +161,9 @@ public class RegulationPanel extends JPanel {
 		flowLayout_12.setAlignment(FlowLayout.LEADING);
 		panel_1.add(panel_11);
 		
-		textField_7 = new JTextField();
-		panel_11.add(textField_7);
-		textField_7.setColumns(10);
+		txtMaxAbroadPlayer = new JTextField();
+		panel_11.add(txtMaxAbroadPlayer);
+		txtMaxAbroadPlayer.setColumns(10);
 		
 		JPanel panel_12 = new JPanel();
 		FlowLayout flowLayout_6 = (FlowLayout) panel_12.getLayout();
@@ -178,9 +178,9 @@ public class RegulationPanel extends JPanel {
 		flowLayout_13.setAlignment(FlowLayout.LEADING);
 		panel_1.add(panel_13);
 		
-		textField_2 = new JTextField();
-		panel_13.add(textField_2);
-		textField_2.setColumns(10);
+		txtWinScore = new JTextField();
+		panel_13.add(txtWinScore);
+		txtWinScore.setColumns(10);
 		
 		JPanel panel_14 = new JPanel();
 		FlowLayout flowLayout_7 = (FlowLayout) panel_14.getLayout();
@@ -195,9 +195,9 @@ public class RegulationPanel extends JPanel {
 		flowLayout_14.setAlignment(FlowLayout.LEADING);
 		panel_1.add(panel_15);
 		
-		textField_9 = new JTextField();
-		panel_15.add(textField_9);
-		textField_9.setColumns(10);
+		txtMaxTimeScored = new JTextField();
+		panel_15.add(txtMaxTimeScored);
+		txtMaxTimeScored.setColumns(10);
 		
 		JPanel panel_20 = new JPanel();
 		FlowLayout flowLayout_16 = (FlowLayout) panel_20.getLayout();
@@ -212,9 +212,9 @@ public class RegulationPanel extends JPanel {
 		flowLayout_18.setAlignment(FlowLayout.LEADING);
 		panel_1.add(panel_22);
 		
-		textField_3 = new JTextField();
-		panel_22.add(textField_3);
-		textField_3.setColumns(10);
+		txtTiredScore = new JTextField();
+		panel_22.add(txtTiredScore);
+		txtTiredScore.setColumns(10);
 		
 		JPanel panel_24 = new JPanel();
 		FlowLayout flowLayout_20 = (FlowLayout) panel_24.getLayout();
@@ -229,9 +229,9 @@ public class RegulationPanel extends JPanel {
 		flowLayout_15.setAlignment(FlowLayout.LEADING);
 		panel_1.add(panel_25);
 		
-		textField_1 = new JTextField();
-		panel_25.add(textField_1);
-		textField_1.setColumns(10);
+		txtMaxPlayerAge = new JTextField();
+		panel_25.add(txtMaxPlayerAge);
+		txtMaxPlayerAge.setColumns(10);
 		
 		JPanel panel_26 = new JPanel();
 		FlowLayout flowLayout_17 = (FlowLayout) panel_26.getLayout();
@@ -246,9 +246,9 @@ public class RegulationPanel extends JPanel {
 		flowLayout_19.setAlignment(FlowLayout.LEADING);
 		panel_1.add(panel_27);
 		
-		textField_4 = new JTextField();
-		panel_27.add(textField_4);
-		textField_4.setColumns(10);
+		txtDefeatScore = new JTextField();
+		panel_27.add(txtDefeatScore);
+		txtDefeatScore.setColumns(10);
 		
 		JPanel panel_18 = new JPanel();
 		panel_16.add(panel_18);
@@ -259,16 +259,16 @@ public class RegulationPanel extends JPanel {
 	}
 	
 	private void setEditable(boolean b){
-		textField.setEnabled(b);
-		textField_1.setEnabled(b);
-		textField_2.setEnabled(b);
-		textField_3.setEnabled(b);
-		textField_4.setEnabled(b);
-		textField_5.setEnabled(b);
-		textField_6.setEnabled(b);
-		textField_7.setEnabled(b);
-		textField_8.setEnabled(b);
-		textField_9.setEnabled(b);
+		txtMinAge.setEnabled(b);
+		txtMaxPlayerAge.setEnabled(b);
+		txtWinScore.setEnabled(b);
+		txtTiredScore.setEnabled(b);
+		txtDefeatScore.setEnabled(b);
+		txtMinNumOfPlayers.setEnabled(b);
+		txtMaxNumOfPlayer.setEnabled(b);
+		txtMaxAbroadPlayer.setEnabled(b);
+		txtNumOfScored.setEnabled(b);
+		txtMaxTimeScored.setEnabled(b);
 	}
 
 }

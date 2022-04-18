@@ -3,6 +3,8 @@ package viewmodel;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
+
 import model.Team;
 import database.DBConnector;
 import database.DBTeam;
@@ -18,16 +20,6 @@ public class FootballTeamListTable extends TableModel{
 		dtm.addColumn("Tên đội");
 		dtm.addColumn("Sân nhà");
 		dtm.addColumn("");
-		
-//		for (int i = 0; i < 10; i++) {
-//			Vector<Object> v = new Vector<>();
-//			v.add(i);
-//			v.add(i);
-//			v.add(i);
-//			v.add(new ImageIcon("/imgs/blank.png"));
-//			dtm.addRow(v);
-//		}
-//		super.addEmptyRow(10);
 		
 		Thread t = new Thread(new Runnable() {
 			
@@ -65,6 +57,40 @@ public class FootballTeamListTable extends TableModel{
 			t.add("");
  			dtm.addRow(t);
 		}
+	}
+
+	@Override
+	public Object getSelectedItem() {
+		int index = table.getSelectedRow();
+		if(index >= 0 && index < table.getRowCount()){
+			if(teamList.get(index) != null){
+				System.out.println("khac null");
+			}
+			return teamList.get(index);
+		}
+		return null;
+	}
+
+	@Override
+	public void addEmptyObject() {
+		teamList.add(null);
+	}
+
+	@Override
+	public void deleteObject(int modelRow) {
+		teamList.remove(modelRow);
+	}
+
+	@Override
+	public boolean canDelete(int index) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public void showErrDelete() {
+		JOptionPane.showMessageDialog(null,
+				"Không được xóa đội bóng đã có dữ liệu thi đấu");
 	}
 
 }

@@ -29,20 +29,7 @@ public class FootballPlayerListTable extends TableModel{
 		// Prevent manager edit this table
 		table.setDefaultEditor(Object.class, null);
 		
-		Thread t = new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				try {
-					Vector<Player> playerList = DBPlayer.getAllPlayer(DBConnector.getInstance());
-					showPlayers(playerList);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-		t.start();
+		getData();
 	}
 	
 	public void showPlayers(Vector<Player> playerList){
@@ -63,6 +50,55 @@ public class FootballPlayerListTable extends TableModel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	}
+	
+	public void getData(){
+		Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					dtm.setRowCount(0);
+					Vector<Player> playerList = DBPlayer.getAllPlayer(DBConnector.getInstance());
+					showPlayers(playerList);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		t.start();
+	}
+
+	@Override
+	public Object getSelectedItem() {
+		int index = table.getSelectedRow();
+		if(index >= 0 && index < table.getRowCount()){
+			return playerList.get(index);
+		}
+		return null;
+	}
+
+	@Override
+	public void addEmptyObject() {
+		playerList.add(null);
+	}
+
+	@Override
+	public void deleteObject(int modelRow) {
+		playerList.remove(modelRow);
+	}
+
+	@Override
+	public boolean canDelete(int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void showErrDelete() {
+		// TODO Auto-generated method stub
 		
 	}
 

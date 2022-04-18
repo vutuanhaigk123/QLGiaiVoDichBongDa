@@ -3,10 +3,13 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import javax.swing.*;
 
+import viewmodel.UpdateTabData;
 import database.DBConnector;
+import database.DBTeam;
 import mdlaf.MaterialLookAndFeel;
 import mdlaf.themes.JMarsDarkTheme;
 
@@ -52,12 +55,14 @@ public class StartProgram {
 			default:
 				break;
 		}
+		UpdateTabData.panelList.put(label, panel);
 		tabbedPane.addTab(label, panel);
 	}
 
 	public static void main(String args[]) {
 		try {
 			final DBConnector db = DBConnector.getInstance();
+			UpdateTabData.panelList = new HashMap<String, JPanel>();
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					JFrame frame = new JFrame("National Football Championship Manager");

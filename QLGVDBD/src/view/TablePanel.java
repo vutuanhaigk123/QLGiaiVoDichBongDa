@@ -45,6 +45,7 @@ public class TablePanel extends JPanel {
 
 	public void addEmptyRow(int quantity){
 		tblModel.addEmptyRow(quantity);
+		tblModel.addEmptyObject();
 	}
 
 	public DefaultTableModel getDtm() {

@@ -68,4 +68,34 @@ public class ScoredPlayerListTable extends TableModel{
 //			}
 //		});
 	}
+
+	@Override
+	public Object getSelectedItem() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addEmptyObject() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteObject(int modelRow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean canDelete(int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void showErrDelete() {
+		// TODO Auto-generated method stub
+		
+	}
 }

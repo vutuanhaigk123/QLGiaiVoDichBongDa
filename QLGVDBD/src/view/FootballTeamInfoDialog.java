@@ -5,6 +5,7 @@ import java.awt.*;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;
@@ -15,12 +16,20 @@ import javax.swing.SwingConstants;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
+import database.DBConnector;
+import database.DBPlayer;
+import model.Player;
+import model.Team;
+import viewmodel.FootballTeamListTable;
 import viewmodel.FootballTeamProfileTable;
 
 @SuppressWarnings("serial")
@@ -29,63 +38,54 @@ public class FootballTeamInfoDialog extends JDialog {
 	@Override
 	public void dispose() {
 		if(btnSave.isVisible()){
-    		int dialogResult = JOptionPane.showConfirmDialog (null, 
-					"Data have been changed. Do you want to save changes?", 
-					"Do you want to save changes?", 
-					JOptionPane.YES_NO_CANCEL_OPTION);
-    		if(dialogResult == JOptionPane.CANCEL_OPTION){
-				return;
+			if(!isTeamInfoEmpty()){
+				int dialogResult = JOptionPane.showConfirmDialog (null, 
+						"Data have been changed. Do you want to save changes?", 
+						"Do you want to save changes?", 
+						JOptionPane.YES_NO_CANCEL_OPTION);
+	    		if(dialogResult == JOptionPane.CANCEL_OPTION){
+					return;
+				}
+	    		else if(dialogResult == JOptionPane.YES_OPTION){
+	    			customTableModel.saveData(txtTeamName.getText(),
+	    					txtStadium.getText());
+					System.out.println("Saved Successful");
+				}
 			}
-    		else if(dialogResult == JOptionPane.YES_OPTION){
-				System.out.println("Saved Successful");
-			}
+    		
     	}
+		customTableModel.clearNullPlayer();
+		updateTableModelTeamList();
 		btnSave.setVisible(false);
 		super.dispose();
 	}
 
 	private final JPanel contentPanel = new JPanel();
-	private JTextField txtTeamName;
-	private JTextField txtStadium;
+	private JTextField txtTeamName, txtStadium;
 	private JButton btnAdd, btnSave, btnEdit;
 	private FootballTeamProfileTable customTableModel;
 	private TablePanel tablePanel;
-
-	public FootballTeamInfoDialog() {
+	private FootballTeamListTable tableModelTeamList;
+	private Team team;
+	
+	public FootballTeamInfoDialog(Team team, FootballTeamListTable tableModelTeamList) {
+		this.tableModelTeamList = tableModelTeamList;
+		addControls(team);
+	}
+	
+	private void addControls(Team t) {
+		this.team = t;
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setTitle("<Team> Profile");
+		setTitle("Team Profile");
 		setBounds(100, 100, 626, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-//		this.addWindowListener(new WindowAdapter() {
-//		    @Override
-//			public void windowClosing(WindowEvent e) {
-//				// TODO Auto-generated method stub
-//		    	super.windowClosing(e);
-//				
-//				
-//			}
-//
-//			@Override
-//		    public void windowClosed(WindowEvent e) {
-//		    	
-//		    }
-//		});
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		{
 			JPanel panel = new JPanel();
 			contentPanel.add(panel, BorderLayout.NORTH);
 			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-			{
-				JPanel panel_1 = new JPanel();
-				panel.add(panel_1);
-				{
-					JLabel lblProfile = new JLabel("<Team> Profile");
-					panel_1.add(lblProfile);
-					lblProfile.setHorizontalAlignment(SwingConstants.CENTER);
-				}
-			}
 			{
 				JPanel panel_1 = new JPanel();
 				panel.add(panel_1);
@@ -147,9 +147,16 @@ public class FootballTeamInfoDialog extends JDialog {
 			tablePanel = new TablePanel(TablePanel.FOOTBALL_TEAM_PROFILE_TABLE);
 			contentPanel.add(tablePanel, BorderLayout.CENTER);
 			customTableModel = ((FootballTeamProfileTable)tablePanel.getTblModel());
+			customTableModel.setTeam(t);
+			customTableModel.getData();
 			customTableModel.setEnable(false);
 			txtTeamName.setEnabled(false);
 			txtStadium.setEnabled(false);
+			if(team != null){
+				txtTeamName.setText(team.getName());
+				txtStadium.setText(team.getHome_stadium());
+			}
+			
 			
 			btnAdd.addActionListener(new ActionListener() {
 				
@@ -165,24 +172,32 @@ public class FootballTeamInfoDialog extends JDialog {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					customTableModel.setEnable(false);	
+					if(isTeamInfoEmpty()){
+						JOptionPane.showMessageDialog(null,
+								"Vui lòng không để trống trường thông tin nào");
+						return;
+					}
+					customTableModel.setEnable(false);
+					customTableModel.changeDateAfterEdit();
 					btnEdit.setVisible(true);
 					btnAdd.setVisible(false);
 					btnSave.setVisible(false);
 					txtTeamName.setEnabled(false);
 					txtStadium.setEnabled(false);
-					HashMap<String, Integer> idList = customTableModel.getIdList();
-					JTable table = tablePanel.getTable();
-					for (int i = 0; i < table.getRowCount(); i++) {
-						if(!isEmptyRow(i)){
-							String typeOfPlayerStr = (String) table.getValueAt(i, 3);
-							System.out.println(table.getValueAt(i, 1) + " "
-									+ table.getValueAt(i, 2) + " ;"
-									+ table.getValueAt(i, 3) + "; "
-									+ idList.get(typeOfPlayerStr));
-						}
-						
-					}
+//					HashMap<String, Integer> idList = customTableModel.getIdList();
+					saveTeam();
+//					JTable table = tablePanel.getTable();
+//					for (int i = 0; i < table.getRowCount(); i++) {
+//						if(!isEmptyRow(i)){
+//							String typeOfPlayerStr = (String) table.getValueAt(i, 3);
+//							System.out.println(table.getValueAt(i, 1) + " "
+//									+ table.getValueAt(i, 2) + " ;"
+//									+ table.getValueAt(i, 3) + "; "
+//									+ idList.get(typeOfPlayerStr));
+//						}
+//						
+//					}
+					
 				}
 			});
 			btnEdit.addActionListener(new ActionListener() {
@@ -190,26 +205,80 @@ public class FootballTeamInfoDialog extends JDialog {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					customTableModel.setEnable(true);
+					customTableModel.changeDateAfterEdit();
 					btnAdd.setVisible(true);
 					btnSave.setVisible(true);
 					btnEdit.setVisible(false);
 					txtTeamName.setEnabled(true);
 					txtStadium.setEnabled(true);
+					
 				}
 			});
 			
 		}
 		setLocationRelativeTo(null);
 	}
-	
+
 	private boolean isEmptyRow(int i){
 		JTable table = tablePanel.getTable();
 		if(table.getValueAt(i, 1).toString().trim().isEmpty() 
-				|| table.getValueAt(i, 3).toString().trim().isEmpty()
-				|| table.getValueAt(i, 2).toString().trim().isEmpty()){
+				|| table.getValueAt(i, 3).toString().isEmpty()
+				|| tablePanel.getTable().getValueAt(i, 2) == null){
+			return true;
+		}
+		return false;
+	}
+	
+	private void updateTableModelTeamList(){
+		int selectedIndex = tableModelTeamList.getTable().getSelectedRow();
+		if(team == null){
+			tableModelTeamList.getDtm().removeRow(
+					selectedIndex);
+			System.out.println("229: null FootbalTeamInfoDialog");
+		}
+		else{
+			tableModelTeamList.getDtm().setValueAt(
+					team.getName(), selectedIndex, 1);
+			tableModelTeamList.getDtm().setValueAt(
+					team.getHome_stadium(), selectedIndex, 2);
+			System.out.println("237: FootbalTeamInfoDialog");
+		}
+	}
+	
+	private void saveTeam(){
+		customTableModel.saveData(team.getName(), team.getHome_stadium());
+	}
+	
+	private boolean isTeamInfoEmpty(){
+		validInput();
+		if(txtStadium.getText().length() <= 0 ||
+				txtTeamName.getText().length() <= 0 ||
+				isPlayerInfoEmpty()){
 			return true;
 		}
 		return false;
 	}
 
+	private boolean isPlayerInfoEmpty() {
+		int last = tablePanel.getTable().getRowCount();
+		for (int i = 0; i < last; i++) {
+			if(isEmptyRow(i)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private void validInput(){
+		txtStadium.setText(txtStadium.getText().toString().trim());
+		txtTeamName.setText(txtTeamName.getText().toString().trim());
+		for (int i = 0; i < tablePanel.getTable().getRowCount(); i++) {
+			tablePanel.getTable().setValueAt(
+					tablePanel.getTable().getValueAt(i, 1).toString().trim(), 
+					i, 1);
+			tablePanel.getTable().setValueAt(
+					tablePanel.getTable().getValueAt(i, 4).toString().trim(), 
+					i, 4);
+		}
+	}
 }
