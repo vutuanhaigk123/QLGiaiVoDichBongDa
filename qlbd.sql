@@ -6,7 +6,6 @@
 -- Generation Time: Apr 18, 2022 at 11:39 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.28
-
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -141,7 +140,8 @@ INSERT INTO `regulation` (`id`, `name`, `type`, `value`, `status`) VALUES
 (0000000006, 'Thời điểm ghi bàn tối đa', 'int', '96', 1),
 (0000000007, 'Điểm thắng', 'int', '3', 1),
 (0000000008, 'Điểm hoà', 'int', '1', 1),
-(0000000009, 'Điểm thua', 'int', '0', 1);
+(0000000009, 'Điểm thua', 'int', '0', 1),
+(0000000010, 'Số lượng các loại bàn thắng', 'int', '3', 1);
 
 -- --------------------------------------------------------
 
