@@ -332,18 +332,21 @@ public class DBPlayer {
 		PreparedStatement pstmt = null;
 		Vector<Player> result = new Vector<>();
 		try {
-			String sql = "SELECT * FROM player p join team t on (p.id_team = t.id) WHERE p.name LIKE CONCAT('%', CONVERT(?, BINARY), '%')";
+			String sql = "SELECT * FROM player p join team t on (p.id_team = t.id) "
+					+ "WHERE p.name LIKE CONCAT('%', CONVERT(?, BINARY), '%') "
+					+ "OR p.id = ?";
 			pstmt = db.getConnection().prepareStatement(sql);
-			pstmt.setString(1, "%" + keyword + "%");
+			pstmt.setString(1, keyword);
+			pstmt.setString(2, keyword);
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
 				Player p = new Player(rs.getInt("p.id"),
-				rs.getInt("p.total_goal"),
-				rs.getString("p.name"),
-				rs.getString("p.note"),
-				rs.getInt("p.id_type"),
-				rs.getDate("p.dob"),
-				rs.getString("t.name"));
+						rs.getInt("p.total_goal"),
+						rs.getString("p.name"),
+						rs.getString("p.note"),
+						rs.getInt("p.id_type"),
+						rs.getDate("p.dob"),
+						rs.getString("t.name"));
 				result.add(p);
 				System.out.println(rs.getString("name"));
 			}
