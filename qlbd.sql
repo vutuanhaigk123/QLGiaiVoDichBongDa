@@ -3,15 +3,17 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 18, 2022 at 11:39 AM
+-- Generation Time: Apr 23, 2022 at 09:12 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.28
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
 CREATE DATABASE `qlbd` CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `qlbd`;
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -49,6 +51,21 @@ CREATE TABLE `match_schedule` (
   `id_result` int(10) UNSIGNED ZEROFILL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `match_schedule`
+--
+
+INSERT INTO `match_schedule` (`id`, `round`, `id_first_team`, `id_second_team`, `time`, `stadium`, `id_result`) VALUES
+(0000000001, 0000000001, 0000000003, 0000000002, '2022-04-01 01:00:00', 'Sân đội 3', 0000000011),
+(0000000002, 0000000001, 0000000004, 0000000001, '2022-04-07 01:30:00', 'Sân đội 4', 0000000015),
+(0000000003, 0000000001, 0000000005, 0000000001, '2022-04-09 02:00:00', 'Sân đội 5', NULL),
+(0000000004, 0000000001, 0000000004, 0000000005, '2022-04-01 02:00:00', 'Sân đội 4', NULL),
+(0000000005, 0000000001, 0000000005, 0000000001, '2022-04-09 02:00:00', 'Sân đội 5', NULL),
+(0000000006, 0000000001, 0000000002, 0000000001, '2022-04-02 00:00:00', 'Sân đội 5', 0000000001),
+(0000000007, 0000000001, 0000000004, 0000000002, '2022-04-16 03:30:00', 'Sân đội 4', NULL),
+(0000000010, 0000000002, 0000000004, 0000000002, '2022-04-08 01:30:00', 'Sân đội 4', NULL),
+(0000000011, 0000000002, 0000000003, 0000000001, '2022-04-14 00:30:00', 'Sân đội 3', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -70,14 +87,15 @@ CREATE TABLE `player` (
 --
 
 INSERT INTO `player` (`id`, `name`, `dob`, `note`, `id_type`, `id_team`, `total_goal`) VALUES
-(0000000001, 'Cầu thủ AEE', '2001-04-01', 'ghi chú A', 0000000001, 0000000001, 0000000000),
+(0000000001, 'Cầu thủ AEE', '2001-04-01', 'ghi chú A', 0000000002, 0000000001, 0000000000),
 (0000000002, 'Cầu thủ BE', '2001-03-01', '', 0000000001, 0000000001, 0000000000),
 (0000000004, 'Cầu thủ D', '2001-02-01', '', 0000000001, 0000000002, 0000000000),
-(0000000005, 'Cầu thủ E', '2001-01-01', '', 0000000001, 0000000002, 0000000000),
+(0000000005, 'Cầu thủ E', '2001-01-01', 'Ghi chú cầu thủ E', 0000000002, 0000000002, 0000000000),
 (0000000006, 'Cầu thủ F', '2022-04-30', 'Cầu thủ F', 0000000001, 0000000001, 0000000000),
 (0000000007, 'Cầu thủ G', '2022-04-01', '', 0000000001, 0000000002, 0000000000),
 (0000000008, 'Cầu thủ H', '2022-04-21', '', 0000000001, 0000000002, 0000000000),
-(0000000009, 'Cầu thủ I', '2022-04-28', 'Ghi chú I', 0000000001, 0000000001, 0000000000);
+(0000000010, 'Cầu thủ BC', '2022-04-05', '', 0000000001, 0000000001, 0000000000),
+(0000000011, 'Cầu thủ DC', '2022-04-07', '', 0000000001, 0000000001, 0000000000);
 
 -- --------------------------------------------------------
 
@@ -155,6 +173,15 @@ CREATE TABLE `result` (
   `second_team_score` int(10) UNSIGNED ZEROFILL NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `result`
+--
+
+INSERT INTO `result` (`id`, `first_team_score`, `second_team_score`) VALUES
+(0000000001, 0000000002, 0000000000),
+(0000000011, 0000000000, 0000000004),
+(0000000015, 0000000000, 0000000000);
+
 -- --------------------------------------------------------
 
 --
@@ -162,11 +189,25 @@ CREATE TABLE `result` (
 --
 
 CREATE TABLE `result_detail` (
+  `id` int(10) UNSIGNED ZEROFILL NOT NULL,
   `id_result` int(10) UNSIGNED ZEROFILL NOT NULL,
   `id_player` int(10) UNSIGNED ZEROFILL NOT NULL,
   `id_type_of_goal` int(10) UNSIGNED ZEROFILL NOT NULL,
-  `time` time NOT NULL
+  `time` int(10) UNSIGNED ZEROFILL NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `result_detail`
+--
+
+INSERT INTO `result_detail` (`id`, `id_result`, `id_player`, `id_type_of_goal`, `time`) VALUES
+(0000000001, 0000000001, 0000000004, 0000000001, 0000000003),
+(0000000009, 0000000011, 0000000004, 0000000001, 0000000003),
+(0000000010, 0000000011, 0000000005, 0000000001, 0000000007),
+(0000000011, 0000000011, 0000000007, 0000000001, 0000000009),
+(0000000018, 0000000015, 0000000006, 0000000002, 0000000009),
+(0000000021, 0000000011, 0000000008, 0000000001, 0000000014),
+(0000000022, 0000000011, 0000000005, 0000000001, 0000000016);
 
 -- --------------------------------------------------------
 
@@ -178,6 +219,14 @@ CREATE TABLE `round` (
   `id` int(10) UNSIGNED ZEROFILL NOT NULL,
   `name` varchar(255) CHARACTER SET utf8 NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `round`
+--
+
+INSERT INTO `round` (`id`, `name`) VALUES
+(0000000001, 'Loại trực tiếp'),
+(0000000002, 'Vòng bảng');
 
 -- --------------------------------------------------------
 
@@ -275,10 +324,10 @@ ALTER TABLE `leaderboard`
 --
 ALTER TABLE `match_schedule`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `FK_matchSchedule_fTeam` (`id_first_team`),
-  ADD KEY `FK_matchSchedule_sTeam` (`id_second_team`),
-  ADD KEY `FK_matchSchedule_result` (`id_result`),
-  ADD KEY `FK_matchSchedule_round` (`round`);
+  ADD KEY `FK_matchSchedule_round` (`round`),
+  ADD KEY `FK_matchSchedule_firstTeam` (`id_first_team`),
+  ADD KEY `FK_matchSchedule_secondTeam` (`id_second_team`),
+  ADD KEY `FK_matchSchedule_result` (`id_result`);
 
 --
 -- Indexes for table `player`
@@ -317,7 +366,8 @@ ALTER TABLE `result`
 -- Indexes for table `result_detail`
 --
 ALTER TABLE `result_detail`
-  ADD PRIMARY KEY (`id_result`,`id_player`),
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_resultDetail_result` (`id_result`),
   ADD KEY `FK_resultDetail_player` (`id_player`),
   ADD KEY `FK_resultDetail_typeOfGoal` (`id_type_of_goal`);
 
@@ -366,13 +416,13 @@ ALTER TABLE `leaderboard`
 -- AUTO_INCREMENT for table `match_schedule`
 --
 ALTER TABLE `match_schedule`
-  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `player`
 --
 ALTER TABLE `player`
-  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `priority`
@@ -384,25 +434,31 @@ ALTER TABLE `priority`
 -- AUTO_INCREMENT for table `regulation`
 --
 ALTER TABLE `regulation`
-  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `result`
 --
 ALTER TABLE `result`
-  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- AUTO_INCREMENT for table `result_detail`
+--
+ALTER TABLE `result_detail`
+  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `round`
 --
 ALTER TABLE `round`
-  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `team`
 --
 ALTER TABLE `team`
-  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `type_of_goal`
@@ -424,11 +480,10 @@ ALTER TABLE `type_of_player`
 -- Constraints for table `match_schedule`
 --
 ALTER TABLE `match_schedule`
-  ADD CONSTRAINT `FK_matchSchedule_fTeam` FOREIGN KEY (`id_first_team`) REFERENCES `team` (`id`),
+  ADD CONSTRAINT `FK_matchSchedule_firstTeam` FOREIGN KEY (`id_first_team`) REFERENCES `team` (`id`),
   ADD CONSTRAINT `FK_matchSchedule_result` FOREIGN KEY (`id_result`) REFERENCES `result` (`id`),
-  ADD CONSTRAINT `FK_matchSchedule_resultDetail` FOREIGN KEY (`id_result`) REFERENCES `result_detail` (`id_result`),
   ADD CONSTRAINT `FK_matchSchedule_round` FOREIGN KEY (`round`) REFERENCES `round` (`id`),
-  ADD CONSTRAINT `FK_matchSchedule_sTeam` FOREIGN KEY (`id_second_team`) REFERENCES `team` (`id`);
+  ADD CONSTRAINT `FK_matchSchedule_secondTeam` FOREIGN KEY (`id_second_team`) REFERENCES `team` (`id`);
 
 --
 -- Constraints for table `player`

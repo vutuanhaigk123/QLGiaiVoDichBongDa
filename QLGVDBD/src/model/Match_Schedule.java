@@ -1,21 +1,32 @@
 package model;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 public class Match_Schedule {
 
 	private int id;
 	private int round;
-	private Date time;
+	private LocalDateTime time;
 	private Team firstTeam, secondTeam;
 	private String stadium;
 	private Result matchResult;
 	
 	
-	public Match_Schedule(int id, int round, Date time, Team firstTeam,
+	public Match_Schedule(int id, int round, LocalDateTime time, Team firstTeam,
 			Team secondTeam, String stadium, Result matchResult) {
 		super();
 		this.id = id;
+		this.round = round;
+		this.time = time;
+		this.firstTeam = firstTeam;
+		this.secondTeam = secondTeam;
+		this.stadium = stadium;
+		this.matchResult = matchResult;
+	}
+	
+	public Match_Schedule(int round, LocalDateTime time, Team firstTeam,
+			Team secondTeam, String stadium, Result matchResult) {
+		super();
 		this.round = round;
 		this.time = time;
 		this.firstTeam = firstTeam;
@@ -36,10 +47,10 @@ public class Match_Schedule {
 	public void setRound(int round) {
 		this.round = round;
 	}
-	public Date getTime() {
+	public LocalDateTime getTime() {
 		return time;
 	}
-	public void setTime(Date time) {
+	public void setTime(LocalDateTime time) {
 		this.time = time;
 	}
 	public Team getFirstTeam() {
@@ -65,5 +76,18 @@ public class Match_Schedule {
 	}
 	public void setMatchResult(Result matchResult) {
 		this.matchResult = matchResult;
+	}
+
+	public boolean isEqual(Match_Schedule match_Schedule) {
+		if(!this.firstTeam.isEqual(match_Schedule.getFirstTeam()) || 
+				!this.secondTeam.isEqual(match_Schedule.getSecondTeam()) ||
+				this.id != match_Schedule.getId() ||
+				this.round != match_Schedule.getRound() ||
+				this.stadium != match_Schedule.getStadium() ||
+				!this.time.toString().equals(match_Schedule.getTime().toString()) ||
+				!this.matchResult.isEqual(match_Schedule.getMatchResult())){
+			return false;
+		}
+		return true;
 	}
 }

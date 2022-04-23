@@ -61,7 +61,10 @@ public class StartProgram {
 
 	public static void main(String args[]) {
 		try {
+			System.out.println("test");
 			final DBConnector db = DBConnector.getInstance();
+
+			System.out.println("ok");
 			UpdateTabData.panelList = new HashMap<String, JPanel>();
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {

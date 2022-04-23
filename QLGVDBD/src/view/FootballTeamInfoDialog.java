@@ -5,7 +5,6 @@ import java.awt.*;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;
@@ -16,18 +15,10 @@ import javax.swing.SwingConstants;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
-import database.DBConnector;
-import database.DBPlayer;
-import model.Player;
 import model.Team;
 import viewmodel.FootballTeamListTable;
 import viewmodel.FootballTeamProfileTable;
@@ -37,6 +28,10 @@ public class FootballTeamInfoDialog extends JDialog {
 
 	@Override
 	public void dispose() {
+		if(!needUpdateData){
+			return;
+		}
+		setNeedUpdateData(false);
 		if(btnSave.isVisible()){
 			if(!isTeamInfoEmpty()){
 				int dialogResult = JOptionPane.showConfirmDialog (null, 
@@ -48,18 +43,19 @@ public class FootballTeamInfoDialog extends JDialog {
 				}
 	    		else if(dialogResult == JOptionPane.YES_OPTION){
 	    			customTableModel.saveData(txtTeamName.getText(),
-	    					txtStadium.getText());
+	    					txtStadium.getText(), tableModelTeamList);
 					System.out.println("Saved Successful");
 				}
 			}
     		
-    	}
+    	}		
 		customTableModel.clearNullPlayer();
 		updateTableModelTeamList();
 		btnSave.setVisible(false);
 		super.dispose();
 	}
 
+	private boolean needUpdateData = true;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtTeamName, txtStadium;
 	private JButton btnAdd, btnSave, btnEdit;
@@ -73,7 +69,12 @@ public class FootballTeamInfoDialog extends JDialog {
 		addControls(team);
 	}
 	
+	synchronized public void setNeedUpdateData(boolean b){
+		needUpdateData = b;
+	}
+	
 	private void addControls(Team t) {
+//		System.out.println("is null: " + t == null);
 		this.team = t;
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setTitle("Team Profile");
@@ -231,22 +232,26 @@ public class FootballTeamInfoDialog extends JDialog {
 	
 	private void updateTableModelTeamList(){
 		int selectedIndex = tableModelTeamList.getTable().getSelectedRow();
-		if(team == null){
+		
+		if(team == null && customTableModel.getTeamOriginal() == null){
 			tableModelTeamList.getDtm().removeRow(
 					selectedIndex);
-			System.out.println("229: null FootbalTeamInfoDialog");
+//			System.out.println("229: null FootbalTeamInfoDialog");
 		}
 		else{
+			team = customTableModel.getTeamOriginal();
 			tableModelTeamList.getDtm().setValueAt(
 					team.getName(), selectedIndex, 1);
 			tableModelTeamList.getDtm().setValueAt(
 					team.getHome_stadium(), selectedIndex, 2);
-			System.out.println("237: FootbalTeamInfoDialog");
+//			System.out.println("237: FootbalTeamInfoDialog");
 		}
 	}
 	
 	private void saveTeam(){
-		customTableModel.saveData(team.getName(), team.getHome_stadium());
+		customTableModel.saveData(txtTeamName.getText(), 
+				txtStadium.getText(),
+				tableModelTeamList);
 	}
 	
 	private boolean isTeamInfoEmpty(){

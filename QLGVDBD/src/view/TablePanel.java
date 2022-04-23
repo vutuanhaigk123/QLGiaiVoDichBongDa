@@ -4,7 +4,6 @@ import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.util.Vector;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -13,6 +12,7 @@ import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 
+import viewmodel.CompetitionScheduleListTable;
 import viewmodel.CompetitionScheduleTable;
 import viewmodel.FootballPlayerListTable;
 import viewmodel.FootballTeamListTable;
@@ -34,18 +34,20 @@ public class TablePanel extends JPanel {
 	public static final int LEADERBOARD_TABLE = 5;
 	public static final int SCORED_PLAYER_LIST_TABLE = 6;
 	public static final int FOOTBALL_PLAYER_SEARCH_TABLE = 7;
+	public static final int ROUND_LIST_TABLE = 8;
+	
 
 	private DefaultTableModel dtm;
-	private JTable table;
+	private JTable table; 
 	private int tableMode;
 	private TableModel tblModel;
 	private JScrollPane scrollPane;
-
+	
 	public TableModel getTblModel() {
 		return tblModel;
 	}
 
-	public void addEmptyRow(int quantity) {
+	public void addEmptyRow(int quantity){
 		tblModel.addEmptyRow(quantity);
 		tblModel.addEmptyObject();
 	}
@@ -73,7 +75,7 @@ public class TablePanel extends JPanel {
 	public void setTableMode(int tableMode) {
 		this.tableMode = tableMode;
 	}
-
+	
 	public TablePanel(int tableMode) {
 		this.tableMode = tableMode;
 		createTable();
@@ -82,7 +84,7 @@ public class TablePanel extends JPanel {
 		addControls();
 	}
 
-	private void createTable() {
+	private void createTable(){
 		switch (tableMode) {
 			case FOOTBALL_TEAM_LIST_TABLE:
 				tblModel = new FootballTeamListTable();
@@ -92,6 +94,9 @@ public class TablePanel extends JPanel {
 				break;
 			case COMPETITION_SCHEDULE_TABLE:
 				tblModel = new CompetitionScheduleTable();
+				break;
+			case ROUND_LIST_TABLE:
+				tblModel = new CompetitionScheduleListTable();
 				break;
 			case MATCH_RESULT_TABLE:
 				tblModel = new MatchResultTable();
@@ -113,22 +118,25 @@ public class TablePanel extends JPanel {
 		}
 	}
 
-	public void addControls() {
+	public void addControls(){		
 		this.setLayout(new BorderLayout());
-		if (tableMode == FOOTBALL_TEAM_PROFILE_TABLE ||
+		
+		if(tableMode == FOOTBALL_TEAM_PROFILE_TABLE ||
 				tableMode == COMPETITION_SCHEDULE_TABLE ||
 				tableMode == MATCH_RESULT_TABLE ||
-				tableMode == FOOTBALL_TEAM_LIST_TABLE) {
-			table.getColumnModel().getColumn(table.getColumnCount() - 1).setMaxWidth(40);
-			table.getColumnModel().getColumn(table.getColumnCount() - 1).setMinWidth(40);
+				tableMode == FOOTBALL_TEAM_LIST_TABLE ||
+				tableMode == ROUND_LIST_TABLE){
+			table.getColumnModel().getColumn(table.getColumnCount() - 1). setMaxWidth(40); 
+			table.getColumnModel().getColumn(table.getColumnCount() - 1). setMinWidth(40);			
 		}
-		if (tableMode == COMPETITION_SCHEDULE_TABLE) {
-			table.getColumnModel().getColumn(4).setMinWidth(300);
-			table.getColumnModel().getColumn(4).setMaxWidth(300);
+		if(tableMode == COMPETITION_SCHEDULE_TABLE){
+			table.getColumnModel().getColumn(4). setMinWidth(300);
+			table.getColumnModel().getColumn(4). setMaxWidth(300);
 		}
 
-		table.getColumnModel().getColumn(0).setMaxWidth(50);
-		table.getColumnModel().getColumn(0).setMinWidth(50);
+		table.getColumnModel().getColumn(0). setMaxWidth(50); 
+		table.getColumnModel().getColumn(0). setMinWidth(50);
+
 
 		scrollPane = new JScrollPane(
 				table,
@@ -136,22 +144,23 @@ public class TablePanel extends JPanel {
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.add(scrollPane, BorderLayout.CENTER);
 	}
+	
 
-	public void scrollToEnd() {
+	public void scrollToEnd(){
 		JScrollBar vertical = scrollPane.getVerticalScrollBar();
-		vertical.setValue(vertical.getMaximum());
-
+		vertical.setValue( vertical.getMaximum() );
+		
 		JScrollBar verticalBar = scrollPane.getVerticalScrollBar();
-		AdjustmentListener downScroller = new AdjustmentListener() {
+	    AdjustmentListener downScroller = new AdjustmentListener() {
 
 			@Override
 			public void adjustmentValueChanged(AdjustmentEvent e) {
 				Adjustable adjustable = e.getAdjustable();
-				adjustable.setValue(adjustable.getMaximum());
-				verticalBar.removeAdjustmentListener(this);
+	            adjustable.setValue(adjustable.getMaximum());
+	            verticalBar.removeAdjustmentListener(this);
 			}
-		};
-		verticalBar.addAdjustmentListener(downScroller);
+	    };
+	    verticalBar.addAdjustmentListener(downScroller);
 	}
 
 }

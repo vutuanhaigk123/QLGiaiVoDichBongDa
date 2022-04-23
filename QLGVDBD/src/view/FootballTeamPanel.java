@@ -20,7 +20,7 @@ public class FootballTeamPanel extends JPanel
 implements ActionListener{
 
 	private TablePanel tablePanel;
-	private JButton btnInfo, btnAdd;
+	private JButton btnInfo, btnAdd, btnEdit, btnSaveChanges;
 
 	public FootballTeamPanel() {
 		addControls();
@@ -47,7 +47,7 @@ implements ActionListener{
 		btnInfo.setToolTipText("Information");
 		btnInfo.setVisible(false);
 
-		JButton btnSaveChanges = new JButton(new ImageIcon("resources/save.png"));
+		btnSaveChanges = new JButton(new ImageIcon("resources/save.png"));
 		panel_3.add(btnSaveChanges);
 		btnSaveChanges.setFocusPainted( false );
 		btnSaveChanges.setToolTipText("Save changes");
@@ -57,9 +57,19 @@ implements ActionListener{
 		btnAdd.setFocusPainted( false );
 		btnAdd.setToolTipText("Register a football team");			
 
+		btnEdit = new JButton("Edit",
+				new ImageIcon("resources/edit.png"));
+		panel_3.add(btnEdit);
+		btnEdit.setFocusPainted( false );
+		btnEdit.setToolTipText("Edit teams");
+		
 
 		btnInfo.addActionListener(this);
 		btnAdd.addActionListener(this);
+		btnEdit.addActionListener(this);
+		btnSaveChanges.addActionListener(this);
+		
+		setEnable(false);
 
 		tablePanel.getDtm().addTableModelListener(new TableModelListener() {
 
@@ -76,6 +86,15 @@ implements ActionListener{
 		});
 
 	}
+	
+	synchronized public void setEnable(boolean b){
+		btnEdit.setVisible(!b);
+		btnSaveChanges.setVisible(b);
+		btnAdd.setVisible(b);
+		FootballTeamListTable footballTeamListModel = 
+				(FootballTeamListTable)tablePanel.getTblModel();
+		footballTeamListModel.setEnable(b);
+	}
 
 	
 	@Override
@@ -84,6 +103,7 @@ implements ActionListener{
 		if((JButton)e.getSource() == btnInfo){
 			FootballTeamInfoDialog f = new FootballTeamInfoDialog(team,
 					(FootballTeamListTable)tablePanel.getTblModel());
+//			System.out.println(team == null);
 			f.setModal(true);
 			f.setVisible(true);
 		}
@@ -97,6 +117,16 @@ implements ActionListener{
 			f.setModal(true);
 			f.setVisible(true);
 		}
+		else if((JButton)e.getSource() == btnEdit){
+			
+			setEnable(true);
+		}
+		else if((JButton)e.getSource() == btnSaveChanges){
+			setEnable(false);
+			((FootballTeamListTable)tablePanel.getTblModel()).saveData();
+			
+		}
+		
 	}
 
 }

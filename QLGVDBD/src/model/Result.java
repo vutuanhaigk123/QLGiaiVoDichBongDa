@@ -40,5 +40,20 @@ public class Result {
 	public void setScoredList(Vector<ResultDetail> scoredList) {
 		this.scoredList = scoredList;
 	}
+
+
+	public boolean isEqual(Result matchResult) {
+		if(id != matchResult.getId() ||
+				firstTeamScore != matchResult.getFirstTeamScore() ||
+				secondTeamScore != matchResult.getSecondTeamScore()){
+			return false;
+		}
+		for (int i = 0; i < scoredList.size(); i++) {
+			if (!scoredList.get(i).isEqual(matchResult.getScoredList().get(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
 	
 }

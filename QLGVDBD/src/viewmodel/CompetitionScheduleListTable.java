@@ -1,22 +1,21 @@
 package viewmodel;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Vector;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.JComboBox;
-import javax.swing.table.TableColumn;
+import javax.swing.table.TableCellEditor;
 
-import model.Team;
+import model.Round;
 import database.DBConnector;
-import database.DBTeam;
+import database.DBMatchSchedule;
+
 
 public class CompetitionScheduleListTable extends TableModel{
 	
 	private boolean isEnable;
+	private Vector<Round> roundList, deletedRound;
+	private TableCellEditor de;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public CompetitionScheduleListTable(){
@@ -24,12 +23,12 @@ public class CompetitionScheduleListTable extends TableModel{
 		dtm.addColumn("STT");
 		dtm.addColumn("Vòng");
 		dtm.addColumn("");
-		table.setDefaultEditor(Object.class, null );
 		
+		getData();
 		super.bindingDeleteBtn("Are you sure to delete this round match?");
-		
-//		setEnable(false);
-		isEnable = true;
+		de = table.getDefaultEditor(LocalDateTime.class);
+		setEnable(false);
+//		isEnable = true;
 		
 		
 		//tblPkg.setAutoCreateRowSorter(true);
@@ -40,42 +39,65 @@ public class CompetitionScheduleListTable extends TableModel{
 //		tblPkg.setDefaultEditor(Object.class, null);
 	}
 	
-	
-	
-	public void updateData(){
+
+
+	public void getData(){
 		Thread t = new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
-				
+				try {
+					dtm.setRowCount(0);
+					roundList = DBMatchSchedule.getAllRound(DBConnector.getInstance());
+
+					for (int i = 0; i < roundList.size(); i++) {
+						Vector<Object> v = new Vector<>();
+						v.add(i + 1);
+						v.add(roundList.get(i).getName());
+						dtm.addRow(v);
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		t.start();
-		
-		
 	}
-
+	
 
 	public boolean isEnable() {
 		return isEnable;
 	}
+	
+	synchronized public void setEnable(boolean b){
+		isEnable = b;
+		if(b){
+			table.setDefaultEditor(Object.class, de);
+		}
+		else{
+			table.setDefaultEditor(Object.class, null );
+		}
+	}
 
 	@Override
 	public Object getSelectedItem() {
-		int index = table.getSelectedRow();
 		return null;
 	}
 
 	@Override
 	public void addEmptyObject() {
-		// TODO Auto-generated method stub
-		
+		if(roundList != null){
+			roundList.add(null);
+		}
 	}
 
 	@Override
 	public void deleteObject(int modelRow) {
-		// TODO Auto-generated method stub
-		
+		if(roundList.get(modelRow) != null){
+			deletedRound.add(roundList.get(modelRow));
+		}
+		roundList.remove(modelRow);
 	}
 
 	@Override
@@ -88,6 +110,13 @@ public class CompetitionScheduleListTable extends TableModel{
 	public void showErrDelete() {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+
+	public Vector<Round> getRoundList() {
+		// TODO Auto-generated method stub
+		return roundList;
 	}
 
 }

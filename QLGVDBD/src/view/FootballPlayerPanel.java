@@ -1,21 +1,21 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.Vector;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import model.Player;
 import database.DBConnector;
 import database.DBPlayer;
-import model.Player;
 import viewmodel.FootballPlayerListTable;
 
 @SuppressWarnings("serial")
@@ -41,13 +41,15 @@ public class FootballPlayerPanel extends JPanel {
 		FlowLayout flowLayout = (FlowLayout) panel_3.getLayout();
 		flowLayout.setAlignment(FlowLayout.TRAILING);
 
+
+
 		txtSearch = new JTextField();
 		txtSearch.setToolTipText("Type name or player ID");
 		panel_3.add(txtSearch);
 		txtSearch.setColumns(15);
 
 		btnSearch = new JButton(new ImageIcon("resources/search.png"));
-		btnSearch.setFocusPainted(false);
+		btnSearch.setFocusPainted( false );
 		btnSearch.setToolTipText("Search football player");
 		panel_3.add(btnSearch);
 
@@ -55,7 +57,6 @@ public class FootballPlayerPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					System.out.println("Keyword: " + "<" + txtSearch.getText() + ">");
 					panel.remove(panel_1);
 					searchResult = DBPlayer.searchPlayer(DBConnector.getInstance(), txtSearch.getText());
 					panel_1 = new TablePanel(TablePanel.FOOTBALL_PLAYER_SEARCH_TABLE);
@@ -67,10 +68,15 @@ public class FootballPlayerPanel extends JPanel {
 				}
 			}
 		});
+
+
+
+
+
 	}
 
-	public void updateData() {
-		((FootballPlayerListTable) (panel_1.getTblModel())).getData();
+	public void updateData(){
+		((FootballPlayerListTable)(panel_1.getTblModel())).getData();
 	}
 
 }

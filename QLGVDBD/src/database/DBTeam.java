@@ -68,7 +68,7 @@ public class DBTeam {
 			pstmt = db.getConnection()
 					.prepareStatement("update team "
 							+ " set name = ?, home_stadium = ? "
-							+ " where id = ?");
+							+ " where id = ? ");
 			pstmt.setString(1, team.getName());
 			pstmt.setString(2, team.getHome_stadium());
 			pstmt.setInt(3, team.getId());
@@ -185,4 +185,99 @@ public class DBTeam {
 		}
 		return teamList;
 	}
+	
+	public static boolean canDelete(DBConnector db, Team team){
+
+		PreparedStatement pstmt = null;
+		boolean result = false;
+		try {
+			pstmt = db.getConnection()
+					.prepareStatement("select count(*) as total "
+							+  " from match_schedule "
+							+ " where id_first_team = ? or id_second_team = ? ");
+			pstmt.setInt(1, team.getId());
+			pstmt.setInt(2, team.getId());
+			ResultSet rs = pstmt.executeQuery();
+			rs.next();
+			if(rs.getInt("total") ==  0){
+				result = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Lỗi khi thực hiện câu truy vấn");
+		} finally {
+			if(pstmt != null)
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		return result;
+	}
+
+	public static Team getTeamByID(DBConnector db, int id){
+		Team team = null;
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = db.getConnection()
+					.prepareStatement("select * from team "
+							+ " where id = ? ");
+			pstmt.setInt(1, id);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next()){
+				Vector<Player> playerList = DBPlayer.getAllPlayer(db, rs.getInt("id"));
+				team = new Team(rs.getInt("id"),
+						rs.getString("name"), 
+						rs.getString("home_stadium"), 
+						playerList);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Lỗi khi thực hiện câu truy vấn");
+		} finally {
+			if(pstmt != null)
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		return team;
+	}
+
+	public static boolean deleteTeam(DBConnector db, Team team) {
+		PreparedStatement pstmt = null;
+		boolean result = false;
+		try {
+			int size = team.getPlayerList().size();
+			for (int i = 0; i < size; i++) {
+				DBPlayer.deletePlayer(db, team.getPlayerList().get(i));
+			}
+			String sql = "delete from team where id = ? ";
+			pstmt = db.getConnection()
+					.prepareStatement(sql);
+			pstmt.setInt(1, team.getId());
+			if(pstmt.executeUpdate() > 0){
+				result = true;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Lỗi khi thực hiện câu truy vấn");
+		} finally {
+			try {
+				if(pstmt != null){
+					pstmt.close();						
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
 }

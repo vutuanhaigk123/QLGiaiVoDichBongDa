@@ -6,14 +6,22 @@ public class ResultDetail {
 
 	private Player player;
 	private String typeOfGoal;
-	private Date time;
+	private int time, id;
 	
 	
-	public ResultDetail(Player player, String typeOfGoal, Date time) {
+	public ResultDetail(int id, Player player, String typeOfGoal, int time) {
 		super();
+		this.id = id;
 		this.player = player;
 		this.typeOfGoal = typeOfGoal;
 		this.time = time;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 	public Player getPlayer() {
@@ -28,11 +36,20 @@ public class ResultDetail {
 	public void setTypeOfGoal(String typeOfGoal) {
 		this.typeOfGoal = typeOfGoal;
 	}
-	public Date getTime() {
+	public int getTime() {
 		return time;
 	}
-	public void setTime(Date time) {
+	public void setTime(int time) {
 		this.time = time;
+	}
+
+	public boolean isEqual(ResultDetail resultDetail) {
+		if(!player.isEqual(resultDetail.getPlayer()) ||
+				typeOfGoal != resultDetail.getTypeOfGoal() ||
+				time != resultDetail.getTime()){
+			return false;
+		}
+		return true;
 	}
 	
 }

@@ -8,11 +8,11 @@ import model.Player;
 import database.DBConnector;
 import database.DBPlayer;
 
-public class FootballPlayerListTable extends TableModel {
-
+public class FootballPlayerListTable extends TableModel{
+	
 	protected Vector<Player> playerList;
-
-	public FootballPlayerListTable() {
+	
+	public FootballPlayerListTable(){
 		super();
 		dtm.addColumn("STT");
 		dtm.addColumn("Cầu thủ");
@@ -20,20 +20,21 @@ public class FootballPlayerListTable extends TableModel {
 		dtm.addColumn("Loại cầu thủ");
 		dtm.addColumn("Tổng số bàn thắng");
 
-		// super.addEmptyRow(10);
-
-		// tblPkg.setAutoCreateRowSorter(true);
-		// TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(dtm);
-		// tblPkg.setRowSorter(sorter);
-		// tblPkg.getRowSorter().toggleSortOrder(0);
+//		super.addEmptyRow(10);
+		
+		//tblPkg.setAutoCreateRowSorter(true);
+//		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(dtm);
+//		tblPkg.setRowSorter(sorter);
+//		tblPkg.getRowSorter().toggleSortOrder(0);
 		// Prevent manager edit this table
 		table.setDefaultEditor(Object.class, null);
-
+		
 		getData();
 	}
-
+	
 	public FootballPlayerListTable(Vector<Player> data) {
 		super();
+		System.out.println("public FootballPlayerListTable(Vector<Player> data) CONSTRUCTOR");
 		dtm.addColumn("STT");
 		dtm.addColumn("Cầu thủ");
 		dtm.addColumn("Đội");
@@ -43,10 +44,11 @@ public class FootballPlayerListTable extends TableModel {
 		table.setDefaultEditor(Object.class, null);
 		showPlayers(data);
 	}
-
-	public void showPlayers(Vector<Player> playerList) {
+	
+	public void showPlayers(Vector<Player> playerList){
 		try {
-			HashMap<Integer, String> typePlayer = DBPlayer.getStringTypeOfPlayer(DBConnector.getInstance());
+			HashMap<Integer, String> typePlayer = 
+					DBPlayer.getStringTypeOfPlayer(DBConnector.getInstance());
 			this.playerList = playerList;
 			for (int i = 0; i < playerList.size(); i++) {
 				Vector<Object> p = new Vector<>();
@@ -61,12 +63,12 @@ public class FootballPlayerListTable extends TableModel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 	}
-
-	public void getData() {
+	
+	public void getData(){
 		Thread t = new Thread(new Runnable() {
-
+			
 			@Override
 			public void run() {
 				try {
@@ -85,7 +87,7 @@ public class FootballPlayerListTable extends TableModel {
 	@Override
 	public Object getSelectedItem() {
 		int index = table.getSelectedRow();
-		if (index >= 0 && index < table.getRowCount()) {
+		if(index >= 0 && index < table.getRowCount()){
 			return playerList.get(index);
 		}
 		return null;
@@ -110,7 +112,7 @@ public class FootballPlayerListTable extends TableModel {
 	@Override
 	public void showErrDelete() {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 }

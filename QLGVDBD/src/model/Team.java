@@ -17,7 +17,7 @@ public class Team {
 	}
 	
 	public Team clone(){
-		Vector<Player> pList = new Vector<Player>();
+		Vector<Player> pList;
 		pList = (Vector<Player>) this.getPlayerList().clone();
 		return new Team(this.getId(), 
 				this.getName(),this.getHome_stadium(), pList);

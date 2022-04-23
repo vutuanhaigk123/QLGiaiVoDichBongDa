@@ -31,6 +31,10 @@ public class FootballTeamProfileTable extends TableModel{
 	private Team team, teamOriginal;
 	private Vector<Player> deletedPlayer;
 	
+	public Team getTeamOriginal(){
+		return teamOriginal;
+	}
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public FootballTeamProfileTable(){
 		super();
@@ -95,6 +99,7 @@ public class FootballTeamProfileTable extends TableModel{
 			dateColumn.setCellEditor(null);
 			dateColumn.setCellRenderer(null);
 			isEnable = false;
+			table.getSelectionModel().clearSelection();
 		}
 		table.repaint();
 	}
@@ -190,33 +195,62 @@ public class FootballTeamProfileTable extends TableModel{
 		}
 	}
 
-	public void saveData(String teamName, String home_stadium){
+	public void saveData(String teamName, String home_stadium,
+			FootballTeamListTable tableModelTeamList){
 		Thread t = new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
 				if(team == null){
-					
+					createNewTeam(teamName, home_stadium);
 				}
 				else{
 					checkDifferents(teamName, home_stadium);
 				}
-				saveToOriginalTeam(team);
-				
+				saveToOriginalTeam(team, tableModelTeamList);
+
 				((FootballPlayerPanel)(UpdateTabData.panelList
 						.get(StartProgram.FOOTBALL_PLAYER_TAB))).updateData();;
-//				setTeam(teamOriginal);
-			}
-		});
+						//				setTeam(teamOriginal);}
+			}});
 		t.start();
 		
 	}
 	
-	private void saveToOriginalTeam(Team t){
+	private void createNewTeam(String teamName, String home_stadium){
+		Vector<Player> pList = new Vector<Player>();
+		for (int i = 0; i < table.getRowCount(); i++) {
+			pList.add(new Player(0, 
+					table.getValueAt(i, 4).toString(), 
+					table.getValueAt(i, 1).toString(), 
+					idList.get(table.getValueAt(i, 3)), 
+					getDate(i)));
+		}
+		try {
+			team = DBTeam.addTeam(DBConnector.getInstance(), 
+					teamName, home_stadium, pList);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void saveToOriginalTeam(Team t, FootballTeamListTable tableModelTeamList){
+		if(teamOriginal != null) {
 		teamOriginal.setId(t.getId());
 		teamOriginal.setHome_stadium(t.getHome_stadium());
 		teamOriginal.setName(t.getName());
 		teamOriginal.setPlayerList(t.getPlayerList());
+		}
+		else{
+			
+			teamOriginal = new Team(t.getId(), t.getName(),
+					t.getHome_stadium(), t.getPlayerList());
+			tableModelTeamList.getTeamList().set(
+					tableModelTeamList.getTable().getSelectedRow(), 
+					teamOriginal);
+			System.out.println("Toi ady");
+		}
 	}
 	
 	private void checkDifferents(String teamName, String home_stadium){
@@ -292,14 +326,21 @@ public class FootballTeamProfileTable extends TableModel{
 	}
 	
 	private void checkUpdateTeamInfo(String teamName, String home_stadium){
+		boolean needUppdate = false;
 		if(teamName != team.getName()){
+			needUppdate = true;
 			team.setName(teamName);
 		}
 		if(home_stadium != team.getHome_stadium()){
+			needUppdate = true;
 			team.setHome_stadium(home_stadium);
 		}
+		if(!needUppdate){
+			return;
+		}
 		try {
-			DBTeam.updateTeam(DBConnector.getInstance(), team);
+			System.out.println("id: " + team.getId());
+			System.out.println(DBTeam.updateTeam(DBConnector.getInstance(), team));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

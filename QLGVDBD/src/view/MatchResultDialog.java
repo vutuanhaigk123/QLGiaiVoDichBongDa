@@ -13,17 +13,32 @@ import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 
+import model.Match_Schedule;
+
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JTextField;
+
+import viewmodel.CompetitionScheduleTable;
+import viewmodel.MatchResultTable;
 
 @SuppressWarnings("serial")
 public class MatchResultDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JButton btnAdd, btnSave;
+	private JButton btnAdd, btnSave, btnEdit, btnDelete;
+	private Match_Schedule ms; 
+	private JTextField txtFTeamScore;
+	private JTextField txtSTeamScore;
+	private TablePanel tablePanel;
 
-	public MatchResultDialog() {
-		setTitle("Kết quả trận đấu <Match>");
-		setBounds(100, 100, 450, 300);
+	public MatchResultDialog(Match_Schedule ms) {
+		this.ms = ms;
+		setTitle("Kết quả trận đấu " + ms.getFirstTeam().getName() 
+				+ " - " + ms.getSecondTeam().getName());
+		setBounds(100, 100, 704, 350);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -44,8 +59,26 @@ public class MatchResultDialog extends JDialog {
 						panel_2.add(lblNewLabel);
 					}
 					{
-						JLabel lblNewLabel_1 = new JLabel("<name>");
+						JLabel lblNewLabel_1 = new JLabel(ms.getFirstTeam().getName());
 						panel_2.add(lblNewLabel_1);
+					}
+				}
+				{
+					JPanel panel_2 = new JPanel();
+					panel_1.add(panel_2);
+					{
+						txtFTeamScore = new JTextField();
+						panel_2.add(txtFTeamScore);
+						txtFTeamScore.setColumns(2);
+					}
+					{
+						JLabel label = new JLabel("-");
+						panel_2.add(label);
+					}
+					{
+						txtSTeamScore = new JTextField();
+						panel_2.add(txtSTeamScore);
+						txtSTeamScore.setColumns(2);
 					}
 				}
 				{
@@ -56,19 +89,7 @@ public class MatchResultDialog extends JDialog {
 						panel_2.add(lblNewLabel_2);
 					}
 					{
-						JLabel label = new JLabel("<name>");
-						panel_2.add(label);
-					}
-				}
-				{
-					JPanel panel_2 = new JPanel();
-					panel_1.add(panel_2);
-					{
-						JLabel lblTS = new JLabel("Tỷ số:");
-						panel_2.add(lblTS);
-					}
-					{
-						JLabel label = new JLabel("<tyso>");
+						JLabel label = new JLabel(ms.getSecondTeam().getName() );
 						panel_2.add(label);
 					}
 				}
@@ -85,10 +106,12 @@ public class MatchResultDialog extends JDialog {
 						panel_2.add(lblSn);
 					}
 					{
-						JLabel label = new JLabel("<name>");
+						JLabel label = new JLabel(ms.getStadium());
 						panel_2.add(label);
 					}
 				}
+				String[] time = ms.getTime()
+						.toString().split("T");
 				{
 					JPanel panel_2 = new JPanel();
 					panel_1.add(panel_2);
@@ -97,7 +120,7 @@ public class MatchResultDialog extends JDialog {
 						panel_2.add(lblNgy);
 					}
 					{
-						JLabel label = new JLabel("<date>");
+						JLabel label = new JLabel(time[0]);
 						panel_2.add(label);
 					}
 				}
@@ -109,7 +132,7 @@ public class MatchResultDialog extends JDialog {
 						panel_2.add(lblGi);
 					}
 					{
-						JLabel label = new JLabel("<time>");
+						JLabel label = new JLabel(time[1]);
 						panel_2.add(label);
 					}
 				}
@@ -122,19 +145,123 @@ public class MatchResultDialog extends JDialog {
 				{
 					btnAdd = new JButton(new ImageIcon("resources/add.png"));
 					btnAdd.setToolTipText("Add a new scored player");
+					btnAdd.setFocusPainted(false);
 					panel_1.add(btnAdd);
 				}
 				{
 					btnSave = new JButton(new ImageIcon("resources/save.png"));
-					btnAdd.setToolTipText("Save changes");
+					btnSave.setToolTipText("Save changes");
+					btnSave.setFocusPainted(false);
 					panel_1.add(btnSave);
+				}
+				{
+					btnEdit = new JButton("Edit",
+							new ImageIcon("resources/edit.png"));
+					btnEdit.setToolTipText("Edit result match");
+					btnEdit.setFocusPainted(false);
+					panel_1.add(btnEdit);
+				}
+				{
+					btnDelete = new JButton(new ImageIcon("resources/delete.png"));
+					btnDelete.setToolTipText("Delete result match detail");
+					btnDelete.setFocusPainted(false);
+					panel_1.add(btnDelete);
+
+					if(ms.getMatchResult() == null ){
+						btnDelete.setVisible(false);
+					}
 				}
 			}
 		}
 		{
-			TablePanel panel = new TablePanel(TablePanel.MATCH_RESULT_TABLE);
-			contentPanel.add(panel, BorderLayout.CENTER);
+			tablePanel = new TablePanel(TablePanel.MATCH_RESULT_TABLE);
+			contentPanel.add(tablePanel, BorderLayout.CENTER);
 		}
+		btnAdd.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+			}
+		});
+		btnSave.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setEnable(false);
+			}
+		});
+		btnEdit.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setEnable(true);
+			}
+		});
+		((MatchResultTable)tablePanel.getTblModel())
+			.showData(ms.getMatchResult(), ms, txtFTeamScore, txtSTeamScore);
+		setEnable(false);
+		setLocationRelativeTo(null);
+		
+		btnAdd.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				((MatchResultTable)tablePanel.getTblModel()).addEmptyRow(1);
+			}
+		});
+		
+		btnSave.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				((MatchResultTable)tablePanel.getTblModel())
+				.saveData(
+						Integer.parseInt(txtFTeamScore.getText()), 
+						Integer.parseInt(txtSTeamScore.getText()));
+
+				tablePanel.revalidate();
+				tablePanel.repaint();
+			}
+		});
+		btnDelete.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				((MatchResultTable)tablePanel.getTblModel()).deleteResultDetail();
+				ms.setMatchResult(null);
+				dispose();
+			}
+		});
+	
 	}
 
+	public void setEnable(boolean b){
+		((MatchResultTable)tablePanel.getTblModel()).setEnable(b);
+		if(b){
+			btnEdit.setVisible(false);
+			btnAdd.setVisible(true);
+			btnSave.setVisible(true);
+			if(txtFTeamScore.getText().equals("?")
+					|| txtSTeamScore.getText().equals("?")){
+				txtFTeamScore.setText("");
+				txtSTeamScore.setText("");
+			}
+			txtFTeamScore.setEnabled(true);
+			txtSTeamScore.setEnabled(true);
+		}
+		else{
+			btnEdit.setVisible(true);
+			btnAdd.setVisible(false);
+			btnSave.setVisible(false);
+			if(txtFTeamScore.getText().trim().length() == 0
+					|| txtSTeamScore.getText().trim().length() == 0){
+				txtFTeamScore.setText("?");
+				txtSTeamScore.setText("?");
+			}
+			txtFTeamScore.setEnabled(false);
+			txtSTeamScore.setEnabled(false);
+		}
+	}
 }
