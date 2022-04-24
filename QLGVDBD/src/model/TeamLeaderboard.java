@@ -3,7 +3,7 @@ package model;
 import java.util.Vector;
 
 public class TeamLeaderboard extends Leaderboard {
-	private Vector<TeamLeaderboardDetail> teamList;
+	public static Vector<TeamLeaderboardDetail> teamLeaderboardList;
 
 	@Override
 	public void createReport() {

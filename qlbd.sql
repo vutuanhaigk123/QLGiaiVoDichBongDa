@@ -6,7 +6,7 @@
 -- Generation Time: Apr 23, 2022 at 09:12 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.28
-
+-- drop database qlbd;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -263,7 +263,7 @@ CREATE TABLE `team_leaderboard` (
   `total_win` int(10) UNSIGNED ZEROFILL NOT NULL,
   `total_defeat` int(10) UNSIGNED ZEROFILL NOT NULL,
   `total_tire` int(10) UNSIGNED ZEROFILL NOT NULL,
-  `difference` int(10) UNSIGNED ZEROFILL NOT NULL,
+  `difference` INT SIGNED,
   `rank` int(10) UNSIGNED NOT NULL,
   `rank_score` int(10) UNSIGNED ZEROFILL NOT NULL,
   `total_goal` int(10) UNSIGNED ZEROFILL NOT NULL
@@ -318,6 +318,8 @@ INSERT INTO `type_of_player` (`id`, `name`) VALUES
 --
 ALTER TABLE `leaderboard`
   ADD PRIMARY KEY (`id`);
+
+insert into `leaderboard` values (0, '2022-01-01');
 
 --
 -- Indexes for table `match_schedule`

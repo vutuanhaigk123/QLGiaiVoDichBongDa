@@ -70,14 +70,22 @@ public class RegulationPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (!txtMinAge.getText().chars().allMatch(Character::isDigit) || !txtMaxPlayerAge.getText().chars().allMatch(Character::isDigit)
-						|| !txtWinScore.getText().chars().allMatch(Character::isDigit) || !txtTiredScore.getText().chars().allMatch(Character::isDigit) ||
-						!txtDefeatScore.getText().chars().allMatch(Character::isDigit) || !txtMinNumOfPlayers.getText().chars().allMatch(Character::isDigit)
-						|| !txtMaxNumOfPlayer.getText().chars().allMatch(Character::isDigit) || !txtMaxAbroadPlayer.getText().chars().allMatch(Character::isDigit) ||
-						!txtNumOfScored.getText().chars().allMatch(Character::isDigit) || !txtMaxTimeScored.getText().chars().allMatch(Character::isDigit))
+				if (!txtMinAge.getText().chars().allMatch(Character::isDigit)
+						|| !txtMaxPlayerAge.getText().chars().allMatch(Character::isDigit)
+						|| !txtWinScore.getText().chars().allMatch(Character::isDigit)
+						|| !txtTiredScore.getText().chars().allMatch(Character::isDigit) ||
+						!txtDefeatScore.getText().chars().allMatch(Character::isDigit)
+						|| !txtMinNumOfPlayers.getText().chars().allMatch(Character::isDigit)
+						|| !txtMaxNumOfPlayer.getText().chars().allMatch(Character::isDigit)
+						|| !txtMaxAbroadPlayer.getText().chars().allMatch(Character::isDigit) ||
+						!txtNumOfScored.getText().chars().allMatch(Character::isDigit)
+						|| !txtMaxTimeScored.getText().chars().allMatch(Character::isDigit))
 					JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ", "Lỗi",
 							JOptionPane.ERROR_MESSAGE);
-				else {
+				else if (Integer.parseInt(txtWinScore.getText().toString()) > Integer
+						.parseInt(txtTiredScore.getText().toString())
+						&& Integer.parseInt(txtTiredScore.getText().toString()) > Integer
+								.parseInt(txtDefeatScore.getText().toString())) {
 					try {
 						getDataToSave();
 						DBRegulationList.saveData(DBConnector.getInstance(), Regulation.regulationList);
@@ -88,7 +96,9 @@ public class RegulationPanel extends JPanel {
 					btnSave.setVisible(false);
 					btnEdit.setVisible(true);
 					setEditable(false);
-				}
+				} else
+					JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ", "Lỗi",
+							JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		panel.add(btnSave);
@@ -333,7 +343,7 @@ public class RegulationPanel extends JPanel {
 		t.start();
 	}
 
-	public void getDataToSave(){
+	public void getDataToSave() {
 		Regulation.regulationList.get(0).setValue(txtMinAge.getText());
 		Regulation.regulationList.get(1).setValue(txtMaxPlayerAge.getText());
 		Regulation.regulationList.get(2).setValue(txtMinNumOfPlayers.getText());
