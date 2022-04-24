@@ -49,7 +49,7 @@ public class DBTeamLeaderboardDetail {
             Regulation.regulationList = DBRegulationList.getAllRegulation(db);
             loadDif_And_RankScore();
 
-            Vector<Priority> priorityList = DBPriority.getAllPriorities(db);
+            Vector<Priority> priorityList = DBPriority.getAllPriority(db);
             while (!priorityList.isEmpty()) {
                 Priority tmp = priorityList.remove(0);
                 switch (tmp.getName()) {
@@ -61,12 +61,12 @@ public class DBTeamLeaderboardDetail {
                         swapByDifference();
                         break;
 
-                    // case "Tổng số bàn thắng":
-                    //     swapByTotalWin();
-                    //     break;
+                    case "Tổng số bàn thắng":
+                        swapByTotalGoal();
+                        break;
 
                     case "Tổng số bàn đối kháng":
-                        // swapByVersus();
+                        swapByVersus();
                         break;
                 }
             }
@@ -132,7 +132,7 @@ public class DBTeamLeaderboardDetail {
             for (TeamLeaderboardDetail detail : TeamLeaderboard.teamLeaderboardList) {
                 pstmt.setInt(1, detail.getTeam().getId());
                 ResultSet rs = pstmt.executeQuery();
-                if (rs.next()){
+                if (rs.next()) {
                     detail.setTotalTire(detail.getTotalTire() + rs.getInt("allWin"));
                     // System.out.println("TIRE COUNT: " + rs.getInt("allWin"));
                 }
@@ -163,7 +163,7 @@ public class DBTeamLeaderboardDetail {
                 pstmt.setInt(1, detail.getTeam().getId());
                 pstmt.setInt(2, detail.getTeam().getId());
                 ResultSet rs = pstmt.executeQuery();
-                if (rs.next()){
+                if (rs.next()) {
                     detail.setTotalDefeat(detail.getTotalDefeat() + rs.getInt("allWin"));
                     // System.out.println("LOSE COUNT: " + rs.getInt("allWin"));
                 }
@@ -238,22 +238,32 @@ public class DBTeamLeaderboardDetail {
     }
 
     private static void swapByVersus() {
+        // swap by versus
+        for (int i = 0; i < TeamLeaderboard.teamLeaderboardList.size() - 1; i++)
+            for (int j = i + 1; j < TeamLeaderboard.teamLeaderboardList.size(); j++) {
+                if (TeamLeaderboard.teamLeaderboardList.get(i).getRank() == TeamLeaderboard.teamLeaderboardList
+                                .get(j).getRank() )
+                    Collections.swap(TeamLeaderboard.teamLeaderboardList, i, j);
+            }
 
-        int tmpRank = 1;
-        for (int i = 0; i < TeamLeaderboard.teamLeaderboardList.size(); i++)
-            if (i == 0 || TeamLeaderboard.teamLeaderboardList.get(i)
-                    .getRankScore() == TeamLeaderboard.teamLeaderboardList.get(i - 1).getRankScore())
-                TeamLeaderboard.teamLeaderboardList.get(i).setRank(tmpRank);
-            else
-                TeamLeaderboard.teamLeaderboardList.get(i).setRank(++tmpRank);
+            int tmpRank = 1;
+            for (int i = 0; i < TeamLeaderboard.teamLeaderboardList.size(); i++)
+                if (i == 0 || (TeamLeaderboard.teamLeaderboardList.get(i)
+                        .getTotalGoal() == TeamLeaderboard.teamLeaderboardList.get(i - 1).getTotalGoal()
+                        && (TeamLeaderboard.teamLeaderboardList.get(i).getRank() == TeamLeaderboard.teamLeaderboardList
+                                .get(i - 1).getRank()
+                                || TeamLeaderboard.teamLeaderboardList.get(i).getRank() == 0)))
+                    TeamLeaderboard.teamLeaderboardList.get(i).setRank(tmpRank);
+                else
+                    TeamLeaderboard.teamLeaderboardList.get(i).setRank(++tmpRank);
     }
 
-    private static void swapByTotalWin() {
+    private static void swapByTotalGoal() {
         // swap by totalGoal
         for (int i = 0; i < TeamLeaderboard.teamLeaderboardList.size() - 1; i++)
             for (int j = i + 1; j < TeamLeaderboard.teamLeaderboardList.size(); j++) {
-                if (TeamLeaderboard.teamLeaderboardList.get(i).getTotalWin() < TeamLeaderboard.teamLeaderboardList
-                        .get(j).getTotalWin()
+                if (TeamLeaderboard.teamLeaderboardList.get(i).getTotalGoal() < TeamLeaderboard.teamLeaderboardList
+                        .get(j).getTotalGoal()
                         && TeamLeaderboard.teamLeaderboardList.get(i).getRank() == TeamLeaderboard.teamLeaderboardList
                                 .get(j).getRank())
                     Collections.swap(TeamLeaderboard.teamLeaderboardList, i, j);
@@ -261,8 +271,11 @@ public class DBTeamLeaderboardDetail {
 
         int tmpRank = 1;
         for (int i = 0; i < TeamLeaderboard.teamLeaderboardList.size(); i++)
-            if (i == 0 || TeamLeaderboard.teamLeaderboardList.get(i)
-                    .getTotalWin() == TeamLeaderboard.teamLeaderboardList.get(i - 1).getTotalWin())
+            if (i == 0 || (TeamLeaderboard.teamLeaderboardList.get(i)
+                    .getTotalGoal() == TeamLeaderboard.teamLeaderboardList.get(i - 1).getTotalGoal()
+                    && (TeamLeaderboard.teamLeaderboardList.get(i).getRank() == TeamLeaderboard.teamLeaderboardList
+                            .get(i - 1).getRank()
+                            || TeamLeaderboard.teamLeaderboardList.get(i).getRank() == 0)))
                 TeamLeaderboard.teamLeaderboardList.get(i).setRank(tmpRank);
             else
                 TeamLeaderboard.teamLeaderboardList.get(i).setRank(++tmpRank);
@@ -281,8 +294,11 @@ public class DBTeamLeaderboardDetail {
 
         int tmpRank = 1;
         for (int i = 0; i < TeamLeaderboard.teamLeaderboardList.size(); i++)
-            if (i == 0 || TeamLeaderboard.teamLeaderboardList.get(i)
-                    .getDifference() == TeamLeaderboard.teamLeaderboardList.get(i - 1).getDifference())
+            if (i == 0 || (TeamLeaderboard.teamLeaderboardList.get(i)
+                    .getDifference() == TeamLeaderboard.teamLeaderboardList.get(i - 1).getDifference()
+                    && (TeamLeaderboard.teamLeaderboardList.get(i).getRank() == TeamLeaderboard.teamLeaderboardList
+                            .get(i - 1).getRank()
+                            || TeamLeaderboard.teamLeaderboardList.get(i).getRank() == 0)))
                 TeamLeaderboard.teamLeaderboardList.get(i).setRank(tmpRank);
             else
                 TeamLeaderboard.teamLeaderboardList.get(i).setRank(++tmpRank);
@@ -301,8 +317,11 @@ public class DBTeamLeaderboardDetail {
 
         int tmpRank = 1;
         for (int i = 0; i < TeamLeaderboard.teamLeaderboardList.size(); i++)
-            if (i == 0 || TeamLeaderboard.teamLeaderboardList.get(i)
-                    .getRankScore() == TeamLeaderboard.teamLeaderboardList.get(i - 1).getRankScore())
+            if (i == 0 || (TeamLeaderboard.teamLeaderboardList.get(i)
+                    .getRankScore() == TeamLeaderboard.teamLeaderboardList.get(i - 1).getRankScore()
+                    && (TeamLeaderboard.teamLeaderboardList.get(i).getRank() == TeamLeaderboard.teamLeaderboardList
+                            .get(i - 1).getRank()
+                            || TeamLeaderboard.teamLeaderboardList.get(i).getRank() == 0)))
                 TeamLeaderboard.teamLeaderboardList.get(i).setRank(tmpRank);
             else
                 TeamLeaderboard.teamLeaderboardList.get(i).setRank(++tmpRank);
