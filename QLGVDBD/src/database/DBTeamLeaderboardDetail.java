@@ -66,7 +66,7 @@ public class DBTeamLeaderboardDetail {
                         break;
 
                     case "Tổng số bàn đối kháng":
-                        // swapByVersus();
+                        swapByVersus();
                         break;
                 }
             }
@@ -237,25 +237,87 @@ public class DBTeamLeaderboardDetail {
         }
     }
 
+    private static boolean versusCompare(Team i, Team j, DBConnector db) {
+        int team_i_count = 0;
+        int team_j_count = 0;
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = db.getConnection()
+                    .prepareStatement(
+                            "Select * from match_schedule ms, result r "
+                                    + " where (ms.id_first_team = ? and ms.id_second_team = ? and ms.id_result = r.id) "
+                                    + "OR (ms.id_first_team = ? and ms.id_second_team = ? and ms.id_result = r.id)");
+            pstmt.setInt(1, i.getId());
+            pstmt.setInt(2, j.getId());
+            pstmt.setInt(3, j.getId());
+            pstmt.setInt(4, i.getId());
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                if ((rs.getString("id_first_team").equals(i.getId() + "")
+                        && Integer.parseInt(rs.getString("first_team_score")) > Integer
+                                .parseInt(rs.getString("second_team_score")))
+                        || (rs.getString("id_second_team").equals(i.getId() + "")
+                                && Integer.parseInt(rs.getString("first_team_score")) < Integer
+                                        .parseInt(rs.getString("second_team_score"))))
+                    team_i_count++;
+
+                else if ((rs.getString("id_first_team").equals(j.getId() + "")
+                        && Integer.parseInt(rs.getString("first_team_score")) > Integer
+                                .parseInt(rs.getString("second_team_score")))
+                        || (rs.getString("id_second_team").equals(j.getId() + "")
+                                && Integer.parseInt(rs.getString("first_team_score")) < Integer
+                                        .parseInt(rs.getString("second_team_score"))))
+                    team_j_count++;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi thực hiện câu truy vấn");
+        } finally {
+            if (pstmt != null)
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+        }
+        if (team_j_count > team_i_count)
+            return true;
+        return false;
+    }
+
     private static void swapByVersus() {
         // swap by versus
         for (int i = 0; i < TeamLeaderboard.teamLeaderboardList.size() - 1; i++)
             for (int j = i + 1; j < TeamLeaderboard.teamLeaderboardList.size(); j++) {
-                if (TeamLeaderboard.teamLeaderboardList.get(i).getRank() == TeamLeaderboard.teamLeaderboardList
-                                .get(j).getRank() )
-                    Collections.swap(TeamLeaderboard.teamLeaderboardList, i, j);
+                try {
+                    if (TeamLeaderboard.teamLeaderboardList.get(i).getRank() == TeamLeaderboard.teamLeaderboardList
+                            .get(j).getRank()
+                            && versusCompare(TeamLeaderboard.teamLeaderboardList.get(i).getTeam(),
+                                    TeamLeaderboard.teamLeaderboardList.get(j).getTeam(), DBConnector.getInstance()))
+                        Collections.swap(TeamLeaderboard.teamLeaderboardList, i, j);
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
 
-            int tmpRank = 1;
-            for (int i = 0; i < TeamLeaderboard.teamLeaderboardList.size(); i++)
-                if (i == 0 || (TeamLeaderboard.teamLeaderboardList.get(i)
-                        .getTotalGoal() == TeamLeaderboard.teamLeaderboardList.get(i - 1).getTotalGoal()
+        int tmpRank = 1;
+        for (int i = 0; i < TeamLeaderboard.teamLeaderboardList.size(); i++)
+            try {
+                if (i == 0 || (!versusCompare(TeamLeaderboard.teamLeaderboardList.get(i).getTeam(),
+                        TeamLeaderboard.teamLeaderboardList.get(i - 1).getTeam(), DBConnector.getInstance())
                         && (TeamLeaderboard.teamLeaderboardList.get(i).getRank() == TeamLeaderboard.teamLeaderboardList
                                 .get(i - 1).getRank()
                                 || TeamLeaderboard.teamLeaderboardList.get(i).getRank() == 0)))
                     TeamLeaderboard.teamLeaderboardList.get(i).setRank(tmpRank);
                 else
                     TeamLeaderboard.teamLeaderboardList.get(i).setRank(++tmpRank);
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
     }
 
     private static void swapByTotalGoal() {

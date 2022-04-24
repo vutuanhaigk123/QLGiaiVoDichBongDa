@@ -275,7 +275,7 @@ CREATE TABLE `team_leaderboard` (
   `total_win` int(10) UNSIGNED ZEROFILL NOT NULL,
   `total_defeat` int(10) UNSIGNED ZEROFILL NOT NULL,
   `total_tire` int(10) UNSIGNED ZEROFILL NOT NULL,
-  `difference` int(10) UNSIGNED ZEROFILL NOT NULL,
+  `difference` int(10) SIGNED,
   `rank` int(10) UNSIGNED NOT NULL,
   `rank_score` int(10) UNSIGNED ZEROFILL NOT NULL,
   `total_goal` int(10) UNSIGNED ZEROFILL NOT NULL
