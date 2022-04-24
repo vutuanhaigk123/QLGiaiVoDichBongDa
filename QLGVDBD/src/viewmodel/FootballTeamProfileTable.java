@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
@@ -17,6 +18,7 @@ import javax.swing.table.TableColumn;
 import view.FootballPlayerPanel;
 import view.StartProgram;
 import model.Player;
+import model.Regulation;
 import model.Team;
 import database.DBConnector;
 import database.DBPlayer;
@@ -423,4 +425,64 @@ public class FootballTeamProfileTable extends TableModel{
 				"Không được xóa cầu thủ đã có dữ liệu ghi bàn");
 	}
 	
+	public String isValid(){
+		try {
+			setEnable(false);
+			changeDateAfterEdit();
+			for (int i = 0; i < table.getRowCount(); i++) {
+				long yearsDiff = getYearsDiff(getDate(i));
+				int numOfPlayer = table.getRowCount();
+				if(yearsDiff < Long.parseLong(Regulation.regulationList.get(0).getValue())){
+					System.out.println(yearsDiff);
+					return "Tuổi tối thiểu của cầu thủ phải từ " 
+							+ Regulation.regulationList.get(0).getValue();
+				}
+				if(yearsDiff > Long.parseLong(Regulation.regulationList.get(1).getValue())){
+					return "Tuổi tối đa của cầu thủ phải dưới "
+							+ Regulation.regulationList.get(1).getValue();
+				}
+				if(numOfPlayer > Integer.parseInt(Regulation.regulationList.get(3).getValue())){
+					return "Số lượng cầu thủ phải dưới "
+							+ Regulation.regulationList.get(3).getValue();
+				}
+				if(numOfPlayer < Integer.parseInt(Regulation.regulationList.get(2).getValue())){
+					return "Số lượng cầu thủ phải từ "
+							+ Regulation.regulationList.get(2).getValue();
+				}
+				if(countAbroadPlayer() > Integer.parseInt(Regulation.regulationList.get(4).getValue())){
+					return "Số lượng cầu thủ nước ngoài tối đa: "
+							+ Regulation.regulationList.get(4).getValue();
+				}
+			}
+			return null;
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+		finally {
+			setEnable(true);
+			changeDateAfterEdit();
+		}
+		return null;
+	}
+	
+	private long getYearsDiff(Date d){
+		System.out.println(TimeUnit
+                .MILLISECONDS
+                .toDays((new java.util.Date().getTime()) - d.getTime()));
+		return TimeUnit
+                .MILLISECONDS
+                .toDays((new java.util.Date().getTime()) - d.getTime()) / 365;
+	}
+	
+	private int countAbroadPlayer(){
+		int count = 0;
+		for (int i = 0; i < table.getRowCount(); i++) {
+			// id trong db = 2
+			if(idList.get(table.getValueAt(i, 3).toString()) == 2){
+				count++;
+			}
+		}
+		return count;
+	}
 }
