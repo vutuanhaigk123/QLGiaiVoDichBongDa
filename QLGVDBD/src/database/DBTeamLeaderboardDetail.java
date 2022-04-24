@@ -66,7 +66,7 @@ public class DBTeamLeaderboardDetail {
                         break;
 
                     case "Tổng số bàn đối kháng":
-                        swapByVersus();
+                        // swapByVersus();
                         break;
                 }
             }

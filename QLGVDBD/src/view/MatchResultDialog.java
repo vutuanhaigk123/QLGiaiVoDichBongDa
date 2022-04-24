@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.BoxLayout;
@@ -215,13 +216,15 @@ public class MatchResultDialog extends JDialog {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				((MatchResultTable)tablePanel.getTblModel())
-				.saveData(
-						Integer.parseInt(txtFTeamScore.getText()), 
-						Integer.parseInt(txtSTeamScore.getText()));
+				if(checkValid()){
+					((MatchResultTable)tablePanel.getTblModel())
+					.saveData(
+							Integer.parseInt(txtFTeamScore.getText()), 
+							Integer.parseInt(txtSTeamScore.getText()));
 
-				tablePanel.revalidate();
-				tablePanel.repaint();
+					tablePanel.revalidate();
+					tablePanel.repaint();
+				}
 			}
 		});
 		btnDelete.addActionListener(new ActionListener() {
@@ -237,6 +240,19 @@ public class MatchResultDialog extends JDialog {
 	
 	}
 
+	private boolean checkValid() {
+		String s = ((MatchResultTable)tablePanel.getTblModel()).isValid();
+		if(txtFTeamScore.getText().trim().length() == 0 ||
+				txtSTeamScore.getText().trim().length() == 0){
+			return false;
+		}
+		if(s != null){
+			JOptionPane.showMessageDialog(null, s);
+			return false;
+		}
+		return true;
+	}
+	
 	public void setEnable(boolean b){
 		((MatchResultTable)tablePanel.getTblModel()).setEnable(b);
 		if(b){

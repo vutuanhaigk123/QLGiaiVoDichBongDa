@@ -3,17 +3,16 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 23, 2022 at 09:12 PM
+-- Generation Time: Apr 24, 2022 at 06:42 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.28
--- drop database qlbd;
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
 CREATE DATABASE `qlbd` CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `qlbd`;
-
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -34,6 +33,18 @@ CREATE TABLE `leaderboard` (
   `id` int(10) UNSIGNED ZEROFILL NOT NULL,
   `time` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `leaderboard`
+--
+
+INSERT INTO `leaderboard` (`id`, `time`) VALUES
+(0000000001, '2022-04-24 00:00:00'),
+(0000000002, '2022-04-24 00:00:00'),
+(0000000003, '2022-04-24 00:00:00'),
+(0000000004, '2022-04-24 00:00:00'),
+(0000000005, '2022-04-24 00:00:00'),
+(0000000006, '2022-04-24 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -91,11 +102,12 @@ INSERT INTO `player` (`id`, `name`, `dob`, `note`, `id_type`, `id_team`, `total_
 (0000000002, 'Cầu thủ BE', '2001-03-01', '', 0000000001, 0000000001, 0000000000),
 (0000000004, 'Cầu thủ D', '2001-02-01', '', 0000000001, 0000000002, 0000000000),
 (0000000005, 'Cầu thủ E', '2001-01-01', 'Ghi chú cầu thủ E', 0000000002, 0000000002, 0000000000),
-(0000000006, 'Cầu thủ F', '2022-04-30', 'Cầu thủ F', 0000000001, 0000000001, 0000000000),
-(0000000007, 'Cầu thủ G', '2022-04-01', '', 0000000001, 0000000002, 0000000000),
-(0000000008, 'Cầu thủ H', '2022-04-21', '', 0000000001, 0000000002, 0000000000),
-(0000000010, 'Cầu thủ BC', '2022-04-05', '', 0000000001, 0000000001, 0000000000),
-(0000000011, 'Cầu thủ DC', '2022-04-07', '', 0000000001, 0000000001, 0000000000);
+(0000000006, 'Cầu thủ F', '2001-04-30', 'Cầu thủ F', 0000000001, 0000000001, 0000000000),
+(0000000007, 'Cầu thủ G', '2001-04-01', '', 0000000001, 0000000002, 0000000000),
+(0000000008, 'Cầu thủ H', '2001-04-21', '', 0000000001, 0000000002, 0000000000),
+(0000000010, 'Cầu thủ BC', '2001-04-05', '', 0000000001, 0000000001, 0000000000),
+(0000000011, 'Cầu thủ DC', '2001-04-07', '', 0000000001, 0000000001, 0000000000),
+(0000000020, 'Cầu thủ 1F', '2001-10-18', '', 0000000001, 0000000001, 0000000000);
 
 -- --------------------------------------------------------
 
@@ -152,14 +164,14 @@ CREATE TABLE `regulation` (
 INSERT INTO `regulation` (`id`, `name`, `type`, `value`, `status`) VALUES
 (0000000001, 'Tuổi tối thiểu của cầu thủ', 'int', '16', 1),
 (0000000002, 'Tuổi tối đa của cầu thủ', 'int', '40', 1),
-(0000000003, 'Số lượng cầu thủ tối thiểu', 'int', '15', 1),
+(0000000003, 'Số lượng cầu thủ tối thiểu', 'int', '2', 1),
 (0000000004, 'Số lượng cầu thủ tối đa', 'int', '22', 1),
 (0000000005, 'Số lượng cầu thủ nước ngoài tối đa', 'int', '3', 1),
 (0000000006, 'Thời điểm ghi bàn tối đa', 'int', '96', 1),
 (0000000007, 'Điểm thắng', 'int', '3', 1),
 (0000000008, 'Điểm hoà', 'int', '1', 1),
 (0000000009, 'Điểm thua', 'int', '0', 1),
-(0000000010, 'Số lượng các loại bàn thắng', 'int', '3', 1);
+(0000000010, 'Số lượng các loại bàn thắng', 'int', '2', 1);
 
 -- --------------------------------------------------------
 
@@ -263,11 +275,29 @@ CREATE TABLE `team_leaderboard` (
   `total_win` int(10) UNSIGNED ZEROFILL NOT NULL,
   `total_defeat` int(10) UNSIGNED ZEROFILL NOT NULL,
   `total_tire` int(10) UNSIGNED ZEROFILL NOT NULL,
-  `difference` INT SIGNED,
+  `difference` int(10) UNSIGNED ZEROFILL NOT NULL,
   `rank` int(10) UNSIGNED NOT NULL,
   `rank_score` int(10) UNSIGNED ZEROFILL NOT NULL,
   `total_goal` int(10) UNSIGNED ZEROFILL NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `team_leaderboard`
+--
+
+INSERT INTO `team_leaderboard` (`id_leaderboard`, `id_team`, `total_win`, `total_defeat`, `total_tire`, `difference`, `rank`, `rank_score`, `total_goal`) VALUES
+(0000000001, 0000000002, 0000000002, 0000000000, 0000000000, 0000000002, 1, 0000000006, 0000000000),
+(0000000001, 0000000004, 0000000000, 0000000000, 0000000001, 0000000000, 2, 0000000001, 0000000000),
+(0000000002, 0000000002, 0000000002, 0000000000, 0000000000, 0000000002, 1, 0000000006, 0000000000),
+(0000000002, 0000000004, 0000000000, 0000000000, 0000000001, 0000000000, 2, 0000000001, 0000000000),
+(0000000003, 0000000002, 0000000002, 0000000000, 0000000000, 0000000002, 1, 0000000006, 0000000000),
+(0000000003, 0000000004, 0000000000, 0000000000, 0000000001, 0000000000, 2, 0000000001, 0000000000),
+(0000000004, 0000000002, 0000000002, 0000000000, 0000000000, 0000000002, 1, 0000000006, 0000000000),
+(0000000004, 0000000004, 0000000000, 0000000000, 0000000001, 0000000000, 2, 0000000001, 0000000000),
+(0000000005, 0000000002, 0000000002, 0000000000, 0000000000, 0000000002, 1, 0000000006, 0000000000),
+(0000000005, 0000000004, 0000000000, 0000000000, 0000000001, 0000000000, 2, 0000000001, 0000000000),
+(0000000006, 0000000002, 0000000002, 0000000000, 0000000000, 0000000002, 1, 0000000006, 0000000000),
+(0000000006, 0000000004, 0000000000, 0000000000, 0000000001, 0000000000, 2, 0000000001, 0000000000);
 
 -- --------------------------------------------------------
 
@@ -318,8 +348,6 @@ INSERT INTO `type_of_player` (`id`, `name`) VALUES
 --
 ALTER TABLE `leaderboard`
   ADD PRIMARY KEY (`id`);
-
-insert into `leaderboard` values (0, '2022-01-01');
 
 --
 -- Indexes for table `match_schedule`
@@ -412,7 +440,7 @@ ALTER TABLE `type_of_player`
 -- AUTO_INCREMENT for table `leaderboard`
 --
 ALTER TABLE `leaderboard`
-  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `match_schedule`
@@ -424,7 +452,7 @@ ALTER TABLE `match_schedule`
 -- AUTO_INCREMENT for table `player`
 --
 ALTER TABLE `player`
-  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `priority`

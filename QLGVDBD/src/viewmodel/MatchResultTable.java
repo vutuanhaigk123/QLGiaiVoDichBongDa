@@ -15,8 +15,10 @@ import javax.swing.table.TableCellEditor;
 
 //import com.sun.crypto.provider.RSACipher;
 
+
 import model.Match_Schedule;
 import model.Player;
+import model.Regulation;
 import model.Result;
 import model.ResultDetail;
 import database.DBConnector;
@@ -436,6 +438,23 @@ public class MatchResultTable extends TableModel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public String isValid(){
+		for (int i = 0; i < table.getRowCount(); i++) {
+			if(table.getValueAt(i, 1).toString().trim().length() == 0 ||
+					table.getValueAt(i, 3).toString().trim().length() == 0 || 
+					table.getValueAt(i, 4).toString().trim().length() == 0){
+				return "Vui lòng nhập đủ thông tin vào dòng còn thiếu";
+			}
+			if(Integer.parseInt(table.getValueAt(i, 4).toString()) < 0||
+					Integer.parseInt(table.getValueAt(i, 4).toString()) > 
+					Integer.parseInt(Regulation.regulationList.get(5).getValue())){
+				return "Thời điểm ghi bàn phải từ 0 - " + Regulation.regulationList.get(5);
+			}
+			
+		}
+		return null;
 	}
 	
 }

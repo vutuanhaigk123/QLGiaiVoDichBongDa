@@ -94,6 +94,9 @@ public class RegulationPanel extends JPanel {
 				}
 					
 				else {
+					if(checkValid() == false){
+						return;
+					}
 					try {
 						getDataToSave();
 						DBRegulationList.saveData(DBConnector.getInstance(), Regulation.regulationList);
@@ -508,5 +511,18 @@ public class RegulationPanel extends JPanel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private boolean checkValid(){
+		if(Integer.parseInt(txtWinScore.getText()) > 
+				Integer.parseInt(txtTiredScore.getText()) &&
+				Integer.parseInt(txtTiredScore.getText()) >
+				Integer.parseInt(txtDefeatScore.getText())){
+			
+			return true;
+		}
+		JOptionPane.showMessageDialog(null,
+				"Ràng buộc: Điểm thắng > Điểm hòa > Điểm thua");
+		return false;
 	}
 }

@@ -8,16 +8,17 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import model.Regulation;
 import model.RegulationList;
 
 public class DBRegulationList {
 	
-	public static HashMap<String, Integer> 
-		getAllTypeOfGoal(DBConnector db){
+	public static HashMap<String, Integer> getAllTypeOfGoal(DBConnector db){
 		HashMap<String, Integer> result = new HashMap<String, Integer>();
 		PreparedStatement pstmt = null;
 		try {
-			pstmt = db.getConnection().prepareStatement("select * from type_of_goal where status = 1");
+			pstmt = db.getConnection().prepareStatement("select * from type_of_goal where status = 1 limit "
+					+ Regulation.regulationList.get(9).getValue());
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
 				result.put(rs.getString("name"), rs.getInt("id"));

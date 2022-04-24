@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 
 import model.Match_Schedule;
 import model.Player;
+import model.Regulation;
 import model.Result;
 import model.ResultDetail;
 import model.Team;
@@ -270,11 +271,13 @@ public class DBResultDetail {
 		HashMap<String, Integer> result = new HashMap<String, Integer>();
 		try {
 			
-			String sql = "select * from type_of_goal where status = 1 ";
+			String sql = "select * from type_of_goal where status = 1 limit "
+					+ Regulation.regulationList.get(9).getValue();
 			pstmt = db.getConnection()
 					.prepareStatement(sql);
 			ResultSet rs = pstmt.executeQuery();
 			while(rs.next()){
+				System.out.println(rs.getString("name"));
 				result.put(rs.getString("name"), rs.getInt("id"));
 			}
 			
