@@ -42,9 +42,16 @@ public class FootballTeamInfoDialog extends JDialog {
 					return;
 				}
 	    		else if(dialogResult == JOptionPane.YES_OPTION){
-	    			customTableModel.saveData(txtTeamName.getText(),
-	    					txtStadium.getText(), tableModelTeamList);
-					System.out.println("Saved Successful");
+	    			if(checkValid()){
+	    				customTableModel.saveData(txtTeamName.getText(),
+		    					txtStadium.getText(), tableModelTeamList);
+						System.out.println("Saved Successful");
+	    			}
+	    			else{
+	    				
+	    				return;
+	    			}
+	    			
 				}
 			}
     		
@@ -53,6 +60,15 @@ public class FootballTeamInfoDialog extends JDialog {
 		updateTableModelTeamList();
 		btnSave.setVisible(false);
 		super.dispose();
+	}
+	
+	private boolean checkValid(){
+		String msg = customTableModel.isValid();
+		if(msg != null){
+			JOptionPane.showMessageDialog(null, msg);
+			return false;
+		}
+		return true;
 	}
 
 	private boolean needUpdateData = true;
@@ -176,6 +192,9 @@ public class FootballTeamInfoDialog extends JDialog {
 					if(isTeamInfoEmpty()){
 						JOptionPane.showMessageDialog(null,
 								"Vui lòng không để trống trường thông tin nào");
+						return;
+					}
+					if(!checkValid()){
 						return;
 					}
 					customTableModel.setEnable(false);
