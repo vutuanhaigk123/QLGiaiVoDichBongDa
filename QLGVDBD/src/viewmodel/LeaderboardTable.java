@@ -82,26 +82,28 @@ public class LeaderboardTable extends TableModel {
 		// }
 		// });
 
-		try {
-			DBTeamLeaderboardDetail.getAllTeam(DBConnector.getInstance());
-			showLeaderboard();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		showLeaderboard();
+
 	}
 
 	public void showLeaderboard() {
-		for (int i = 0; i < TeamLeaderboard.teamLeaderboardList.size(); i++) {
-			Vector<Object> p = new Vector<>();
-			p.add(table.getRowCount() + 1);
-			p.add(TeamLeaderboard.teamLeaderboardList.get(i).getTeam().getName());
-			p.add(TeamLeaderboard.teamLeaderboardList.get(i).getTotalWin());
-			p.add(TeamLeaderboard.teamLeaderboardList.get(i).getTotalTire());
-			p.add(TeamLeaderboard.teamLeaderboardList.get(i).getTotalDefeat());
-			p.add(TeamLeaderboard.teamLeaderboardList.get(i).getDifference());
-			p.add(TeamLeaderboard.teamLeaderboardList.get(i).getRank());
-			dtm.addRow(p);
+		try {
+			DBTeamLeaderboardDetail.getAllTeam(DBConnector.getInstance());
+			dtm.setRowCount(0);
+			for (int i = 0; i < TeamLeaderboard.teamLeaderboardList.size(); i++) {
+				Vector<Object> p = new Vector<>();
+				p.add(table.getRowCount() + 1);
+				p.add(TeamLeaderboard.teamLeaderboardList.get(i).getTeam().getName());
+				p.add(TeamLeaderboard.teamLeaderboardList.get(i).getTotalWin());
+				p.add(TeamLeaderboard.teamLeaderboardList.get(i).getTotalTire());
+				p.add(TeamLeaderboard.teamLeaderboardList.get(i).getTotalDefeat());
+				p.add(TeamLeaderboard.teamLeaderboardList.get(i).getDifference());
+				p.add(TeamLeaderboard.teamLeaderboardList.get(i).getRank());
+				dtm.addRow(p);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
