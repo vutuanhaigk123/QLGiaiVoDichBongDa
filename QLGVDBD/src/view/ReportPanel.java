@@ -1,26 +1,63 @@
 package view;
 
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Date;
+
+import javax.swing.JButton;
+
 import viewmodel.LeaderboardTable;
 import viewmodel.ScoredPlayerListTable;
 
-import java.awt.FlowLayout;
+import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.components.DatePickerSettings;
+import com.github.lgooddatepicker.components.DateTimePicker;
+import com.github.lgooddatepicker.components.DatePickerSettings.DateArea;
+import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
 public class ReportPanel extends JPanel {
 
-	/**
-	 * Create the panel.
-	 */
-
-	private TablePanel leaderboardPanel, playerListPanel;
+	private JButton btnSearch;
+	private DatePicker datePicker;
 
 	public ReportPanel() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+		JPanel panel_4 = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel_4.getLayout();
+		flowLayout.setAlignment(FlowLayout.TRAILING);
+		add(panel_4);
+
+
+		DatePickerSettings settings = new DatePickerSettings();
+		settings.setGapBeforeButtonPixels(0);
+		settings.setSizeTextFieldMinimumWidthDefaultOverride(false);
+		settings.setColor(DateArea.BackgroundMonthAndYearMenuLabels, Color.DARK_GRAY);
+		settings.setColor(DateArea.BackgroundTodayLabel, Color.DARK_GRAY);
+		settings.setColor(DateArea.BackgroundClearLabel, Color.DARK_GRAY);
+		settings.setColor(DateArea.BackgroundCalendarPanelLabelsOnHover, Color.ORANGE);
+		settings.setColor(DateArea.DatePickerTextValidDate, Color.ORANGE);
+		
+		JLabel lblPickDate = new JLabel("Chọn ngày lập báo cáo:");
+		panel_4.add(lblPickDate);
+		datePicker = new DatePicker(settings );
+		panel_4.add(datePicker);
+		btnSearch = new JButton(new ImageIcon("resources/search.png"));
+		btnSearch.setFocusPainted( false );
+		btnSearch.setToolTipText("Back to round list");
+		panel_4.add(btnSearch);
+
+
 
 		JPanel pnLeaderboard = new JPanel();
 		add(pnLeaderboard);
@@ -33,8 +70,8 @@ public class ReportPanel extends JPanel {
 		JLabel lblBngXpHng = new JLabel("BẢNG XẾP HẠNG");
 		panel_1.add(lblBngXpHng);
 
-		leaderboardPanel = new TablePanel(TablePanel.LEADERBOARD_TABLE);
-		pnLeaderboard.add(leaderboardPanel);
+		TablePanel teamPanel = new TablePanel(TablePanel.LEADERBOARD_TABLE);
+		pnLeaderboard.add(teamPanel);
 
 		JPanel pnScoredPlayer = new JPanel();
 		add(pnScoredPlayer);
@@ -47,25 +84,36 @@ public class ReportPanel extends JPanel {
 		panel.add(lblNewLabel);
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-		playerListPanel = new TablePanel(TablePanel.SCORED_PLAYER_LIST_TABLE);
-		pnScoredPlayer.add(playerListPanel);
+		TablePanel playerPanel = new TablePanel(TablePanel.SCORED_PLAYER_LIST_TABLE);
+		pnScoredPlayer.add(playerPanel);
+		pnLeaderboard.setVisible(false);
+		pnScoredPlayer.setVisible(false);
 
-	}
+		btnSearch.addActionListener(new ActionListener() {
 
-	public void getLeaderboardPanel() {
-		((LeaderboardTable) leaderboardPanel.getTblModel()).showLeaderboard();
-	}
+			@Override
+			public void actionPerformed(ActionEvent e) {
 
-	public void setLeaderboardPanel(TablePanel leaderboardPanel) {
-		this.leaderboardPanel = leaderboardPanel;
-	}
+				if(datePicker.getDate() == null){
+					JOptionPane.showMessageDialog(null,
+							"Vui lòng chọn ngày lập báo cáo");
+				}
+				else{
+					pnLeaderboard.setVisible(true);
+					pnScoredPlayer.setVisible(true);
+					new Thread(new Runnable() {
 
-	public void getPlayerListPanel() {
-		((ScoredPlayerListTable) playerListPanel.getTblModel()).getData();
-	}
+						@Override
+						public void run() {
+							Date time = Date.valueOf(datePicker.getDate());
+							((LeaderboardTable)teamPanel.getTblModel()).showData(time);
+							((ScoredPlayerListTable)playerPanel.getTblModel()).showData(time);
+						}
+					}).start();
+				}
+			}
+		});
 
-	public void setPlayerListPanel(TablePanel playerListPanel) {
-		this.playerListPanel = playerListPanel;
 	}
 
 }

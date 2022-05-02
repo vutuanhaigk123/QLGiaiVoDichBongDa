@@ -12,58 +12,58 @@ import javax.swing.JOptionPane;
 import model.Player;
 
 public class DBPlayer {
-
+	
 	public static Player addPlayer(
-			DBConnector db, Player player, int id_team, String teamName) {
+			DBConnector db, Player player, int id_team, String teamName){
 		Player result = null;
 		int id = createPlayerInDb(db, player, id_team);
-		if (id > 0) {
-			result = new Player(id, player.getTotal_goal(),
-					player.getName(), player.getNote(),
+		if(id > 0){
+			result = new Player(id, player.getTotal_goal(), 
+					player.getName(), player.getNote(), 
 					player.getTypeOfPlayer(), player.getDob(), teamName);
 		}
 		return result;
 	}
-
+	
 	synchronized public static int createPlayerInDb(
-			DBConnector db, Player player, int id_team) {
+			DBConnector db, Player player, int id_team){
 		int result = -1;
 		PreparedStatement pstmt = null, pstmtLastId = null;
 		try {
 			String sql = "insert into "
 					+ "player(name, dob, id_type, id_team, total_goal, note) "
 					+ "values (?, ?, ?, ?, ?, ?) ";
-			// for(int i = 0; i< list.size(); i++){
-			// sql += " , (?, ?, ?, ?, ?) ";
-			// }
+//			for(int i = 0; i< list.size(); i++){
+//				sql += " , (?, ?, ?, ?, ?) ";
+//			}
 			pstmtLastId = db.getConnection()
 					.prepareStatement("SELECT LAST_INSERT_ID();");
 			pstmt = db.getConnection()
 					.prepareStatement(sql);
-			// for(int i = 0; i < list.size(); i++){
+//			for(int i = 0; i < list.size(); i++){
 			pstmt.setString(1, player.getName());
 			pstmt.setDate(2, player.getDob());
 			pstmt.setInt(3, player.getTypeOfPlayer());
 			pstmt.setInt(4, id_team);
 			pstmt.setInt(5, 0);
 			pstmt.setString(6, player.getNote());
-			// }
+//			}
 			pstmt.executeUpdate();
 			ResultSet rs = pstmtLastId.executeQuery();
-			if (rs.isBeforeFirst()) {
+			if(rs.isBeforeFirst()){
 				rs.next();
 				result = rs.getInt(1);
 			}
-
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Lỗi khi thực hiện câu truy vấn");
 		} finally {
 			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (pstmtLastId != null) {
+				if(pstmt != null){
+					pstmt.close();						
+				} 
+				if(pstmtLastId != null){
 					pstmtLastId.close();
 				}
 			} catch (SQLException e) {
@@ -73,8 +73,8 @@ public class DBPlayer {
 		}
 		return result;
 	}
-
-	public static String getStringTypeOfPlayer(DBConnector db, int id) {
+	
+	public static String getStringTypeOfPlayer(DBConnector db, int id){
 		PreparedStatement pstmt = null;
 		String result = null;
 		try {
@@ -83,15 +83,16 @@ public class DBPlayer {
 							+ "where id = ?");
 			pstmt.setInt(1, id);
 			ResultSet rs = pstmt.executeQuery();
-			if (rs.isBeforeFirst()) {
+			if(rs.isBeforeFirst()){
 				rs.next();
 				result = rs.getString(0);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Lỗi khi thực hiện câu truy vấn");
-		} finally {
-			if (pstmt != null)
+		}
+		finally {
+			if(pstmt != null)
 				try {
 					pstmt.close();
 				} catch (SQLException e) {
@@ -101,22 +102,23 @@ public class DBPlayer {
 		}
 		return result;
 	}
-
-	public static HashMap<Integer, String> getStringTypeOfPlayer(DBConnector db) {
+	
+	public static HashMap<Integer, String> getStringTypeOfPlayer(DBConnector db){
 		PreparedStatement pstmt = null;
 		HashMap<Integer, String> result = new HashMap<Integer, String>();
 		try {
 			pstmt = db.getConnection()
 					.prepareStatement("select * from type_of_player ");
 			ResultSet rs = pstmt.executeQuery();
-			while (rs.next()) {
+			while(rs.next()){
 				result.put(rs.getInt("id"), rs.getString("name"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Lỗi khi thực hiện câu truy vấn");
-		} finally {
-			if (pstmt != null)
+		}
+		finally {
+			if(pstmt != null)
 				try {
 					pstmt.close();
 				} catch (SQLException e) {
@@ -127,15 +129,15 @@ public class DBPlayer {
 		return result;
 	}
 
-	public static void getAllTypeOfPlayer(DBConnector db,
-			JComboBox<String> combobox, HashMap<String, Integer> idList) {
+	public static void getAllTypeOfPlayer(DBConnector db, 
+			JComboBox<String> combobox, HashMap<String, Integer> idList){
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = db.getConnection()
 					.prepareStatement("select * from type_of_player; ");
 			ResultSet rs = pstmt.executeQuery();
-			if (rs.isBeforeFirst()) {
-				while (rs.next()) {
+			if(rs.isBeforeFirst()){
+				while(rs.next()){
 					combobox.addItem(rs.getString("name"));
 					idList.put(rs.getString("name"), rs.getInt("id"));
 				}
@@ -143,8 +145,9 @@ public class DBPlayer {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Lỗi khi thực hiện câu truy vấn");
-		} finally {
-			if (pstmt != null)
+		}
+		finally {
+			if(pstmt != null)
 				try {
 					pstmt.close();
 				} catch (SQLException e) {
@@ -164,8 +167,8 @@ public class DBPlayer {
 							+ " where p.id_team = ? ");
 			pstmt.setInt(1, id_team);
 			ResultSet rs = pstmt.executeQuery();
-			while (rs.next()) {
-				Player p = new Player(rs.getInt("p.id"),
+			while(rs.next()){
+				Player p = new Player(rs.getInt("p.id"), 
 						rs.getInt("p.total_goal"),
 						rs.getString("p.name"),
 						rs.getString("p.note"),
@@ -178,7 +181,7 @@ public class DBPlayer {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Lỗi khi thực hiện câu truy vấn");
 		} finally {
-			if (pstmt != null)
+			if(pstmt != null)
 				try {
 					pstmt.close();
 				} catch (SQLException e) {
@@ -188,7 +191,7 @@ public class DBPlayer {
 		}
 		return playerList;
 	}
-
+	
 	public static Vector<Player> getAllPlayer(DBConnector db) {
 		Vector<Player> playerList = new Vector<Player>();
 		PreparedStatement pstmt = null;
@@ -198,9 +201,9 @@ public class DBPlayer {
 							+ "from player p join team t on (p.id_team = t.id) "
 							+ "order by p.id_team ");
 			ResultSet rs = pstmt.executeQuery();
-			while (rs.next()) {
-
-				Player p = new Player(rs.getInt("p.id"),
+			while(rs.next()){				
+				
+				Player p = new Player(rs.getInt("p.id"), 
 						rs.getInt("p.total_goal"),
 						rs.getString("p.name"),
 						rs.getString("note"),
@@ -209,23 +212,11 @@ public class DBPlayer {
 						rs.getString("t.name"));
 				playerList.add(p);
 			}
-			PreparedStatement statement = db.getConnection()
-					.prepareStatement("select count(*) as totalGoal from player p, result_detail r where p.id = r.id_player and p.id = ?");
-			for (Player player : playerList) {
-				statement.setInt(1, player.getId());
-				ResultSet rSet = statement.executeQuery();
-				if(rSet.next())
-					player.setTotal_goal(rSet.getInt("totalGoal"));
-				PreparedStatement uStatement = db.getConnection().prepareStatement("UPDATE player SET total_goal = ? WHERE id  = ? ");
-				uStatement.setInt(1, player.getTotal_goal());
-				uStatement.setInt(2, player.getId());
-				uStatement.executeUpdate();
-			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Lỗi khi thực hiện câu truy vấn");
 		} finally {
-			if (pstmt != null)
+			if(pstmt != null)
 				try {
 					pstmt.close();
 				} catch (SQLException e) {
@@ -236,7 +227,7 @@ public class DBPlayer {
 		return playerList;
 	}
 
-	public static boolean deletePlayer(DBConnector db, Player player) {
+	public static boolean deletePlayer(DBConnector db, Player player){
 		PreparedStatement pstmt = null;
 		boolean result = false;
 		try {
@@ -244,17 +235,17 @@ public class DBPlayer {
 			pstmt = db.getConnection()
 					.prepareStatement(sql);
 			pstmt.setInt(1, player.getId());
-			if (pstmt.executeUpdate() > 0) {
+			if(pstmt.executeUpdate() > 0){
 				result = true;
 			}
-
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Lỗi khi thực hiện câu truy vấn");
 		} finally {
 			try {
-				if (pstmt != null) {
-					pstmt.close();
+				if(pstmt != null){
+					pstmt.close();						
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -263,17 +254,17 @@ public class DBPlayer {
 		}
 		return result;
 	}
-
-	public static boolean canDelete(DBConnector db, Player player) {
-		if (countNumOfOccurrences(db, player, "player_leaderboard")
-				+ countNumOfOccurrences(db, player, "result_detail") == 0) {
+	
+	public static boolean canDelete(DBConnector db, Player player){
+		if(countNumOfOccurrences(db, player, "player_leaderboard")
+				+ countNumOfOccurrences(db, player, "result_detail") == 0){
 			return true;
 		}
 		return false;
 	}
-
-	public static int countNumOfOccurrences(DBConnector db,
-			Player player, String tableName) {
+	
+	public static int countNumOfOccurrences(DBConnector db, 
+			Player player, String tableName){
 		int result = 0;
 		PreparedStatement pstmt = null;
 		try {
@@ -284,18 +275,18 @@ public class DBPlayer {
 			pstmt.setInt(1, player.getId());
 			pstmt.executeQuery();
 			ResultSet rs = pstmt.executeQuery();
-			if (rs.isBeforeFirst()) {
+			if(rs.isBeforeFirst()){
 				rs.next();
 				result = rs.getInt(1);
 			}
-
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Lỗi khi thực hiện câu truy vấn");
 		} finally {
 			try {
-				if (pstmt != null) {
-					pstmt.close();
+				if(pstmt != null){
+					pstmt.close();						
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -305,7 +296,7 @@ public class DBPlayer {
 		return result;
 	}
 
-	public static boolean updatePlayer(DBConnector db, Player p) {
+	public static boolean updatePlayer(DBConnector db, Player p){
 		PreparedStatement pstmt = null;
 		boolean result = false;
 		try {
@@ -319,17 +310,17 @@ public class DBPlayer {
 			pstmt.setInt(3, p.getTypeOfPlayer());
 			pstmt.setString(4, p.getNote());
 			pstmt.setInt(5, p.getId());
-			if (pstmt.executeUpdate() > 0) {
+			if(pstmt.executeUpdate() > 0){
 				result = true;
 			}
-
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Lỗi khi thực hiện câu truy vấn");
 		} finally {
 			try {
-				if (pstmt != null) {
-					pstmt.close();
+				if(pstmt != null){
+					pstmt.close();						
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -352,12 +343,12 @@ public class DBPlayer {
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
 				Player p = new Player(rs.getInt("p.id"),
-						rs.getInt("p.total_goal"),
-						rs.getString("p.name"),
-						rs.getString("p.note"),
-						rs.getInt("p.id_type"),
-						rs.getDate("p.dob"),
-						rs.getString("t.name"));
+				rs.getInt("p.total_goal"),
+				rs.getString("p.name"),
+				rs.getString("p.note"),
+				rs.getInt("p.id_type"),
+				rs.getDate("p.dob"),
+				rs.getString("t.name"));
 				result.add(p);
 				System.out.println(rs.getString("name"));
 			}
@@ -376,8 +367,8 @@ public class DBPlayer {
 		}
 		return result;
 	}
-
-	public static Player getPlayerByID(DBConnector db, int id) {
+	
+	public static Player getPlayerByID(DBConnector db, int id){
 		Player player = null;
 		PreparedStatement pstmt = null;
 		try {
@@ -387,9 +378,9 @@ public class DBPlayer {
 							+ " where p.id = ? ");
 			pstmt.setInt(1, id);
 			ResultSet rs = pstmt.executeQuery();
-			while (rs.next()) {
+			while(rs.next()){
 				player = new Player(
-						rs.getInt("p.id"),
+						rs.getInt("p.id"), 
 						rs.getInt("p.total_goal"),
 						rs.getString("p.name"),
 						rs.getString("p.note"),
@@ -401,7 +392,7 @@ public class DBPlayer {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Lỗi khi thực hiện câu truy vấn");
 		} finally {
-			if (pstmt != null)
+			if(pstmt != null)
 				try {
 					pstmt.close();
 				} catch (SQLException e) {
@@ -411,5 +402,5 @@ public class DBPlayer {
 		}
 		return player;
 	}
-
+	
 }

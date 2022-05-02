@@ -225,6 +225,20 @@ public class MatchResultDialog extends JDialog {
 					tablePanel.revalidate();
 					tablePanel.repaint();
 				}
+				
+			}
+
+			private boolean checkValid() {
+				String s = ((MatchResultTable)tablePanel.getTblModel()).isValid();
+				if(txtFTeamScore.getText().trim().length() == 0 ||
+						txtSTeamScore.getText().trim().length() == 0){
+					return false;
+				}
+				if(s != null){
+					JOptionPane.showMessageDialog(null, s);
+					return false;
+				}
+				return true;
 			}
 		});
 		btnDelete.addActionListener(new ActionListener() {
@@ -240,19 +254,6 @@ public class MatchResultDialog extends JDialog {
 	
 	}
 
-	private boolean checkValid() {
-		String s = ((MatchResultTable)tablePanel.getTblModel()).isValid();
-		if(txtFTeamScore.getText().trim().length() == 0 ||
-				txtSTeamScore.getText().trim().length() == 0){
-			return false;
-		}
-		if(s != null){
-			JOptionPane.showMessageDialog(null, s);
-			return false;
-		}
-		return true;
-	}
-	
 	public void setEnable(boolean b){
 		((MatchResultTable)tablePanel.getTblModel()).setEnable(b);
 		if(b){

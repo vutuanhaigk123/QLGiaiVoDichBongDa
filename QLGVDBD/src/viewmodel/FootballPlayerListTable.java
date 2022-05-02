@@ -34,6 +34,7 @@ public class FootballPlayerListTable extends TableModel{
 	
 	public FootballPlayerListTable(Vector<Player> data) {
 		super();
+		System.out.println("public FootballPlayerListTable(Vector<Player> data) CONSTRUCTOR");
 		dtm.addColumn("STT");
 		dtm.addColumn("Cầu thủ");
 		dtm.addColumn("Đội");

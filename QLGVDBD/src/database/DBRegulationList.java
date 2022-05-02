@@ -13,7 +13,8 @@ import model.RegulationList;
 
 public class DBRegulationList {
 	
-	public static HashMap<String, Integer> getAllTypeOfGoal(DBConnector db){
+	public static HashMap<String, Integer> 
+		getAllTypeOfGoal(DBConnector db){
 		HashMap<String, Integer> result = new HashMap<String, Integer>();
 		PreparedStatement pstmt = null;
 		try {
@@ -87,4 +88,7 @@ public class DBRegulationList {
 				}
 		}
 	}
+
+	
+
 }

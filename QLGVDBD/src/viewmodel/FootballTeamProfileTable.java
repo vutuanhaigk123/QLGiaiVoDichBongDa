@@ -467,9 +467,9 @@ public class FootballTeamProfileTable extends TableModel{
 	}
 	
 	private long getYearsDiff(Date d){
-//		System.out.println(TimeUnit
-//                .MILLISECONDS
-//                .toDays((new java.util.Date().getTime()) - d.getTime()));
+		System.out.println(TimeUnit
+                .MILLISECONDS
+                .toDays((new java.util.Date().getTime()) - d.getTime()));
 		return TimeUnit
                 .MILLISECONDS
                 .toDays((new java.util.Date().getTime()) - d.getTime()) / 365;
@@ -485,6 +485,4 @@ public class FootballTeamProfileTable extends TableModel{
 		}
 		return count;
 	}
-	
-	
 }

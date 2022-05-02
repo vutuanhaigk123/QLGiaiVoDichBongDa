@@ -22,48 +22,49 @@ import javax.swing.JTextField;
 import model.Team;
 import viewmodel.FootballTeamListTable;
 import viewmodel.FootballTeamProfileTable;
-import viewmodel.UpdateTabData;
 
 @SuppressWarnings("serial")
 public class FootballTeamInfoDialog extends JDialog {
 
 	@Override
 	public void dispose() {
-		if (!needUpdateData) {
+		if(!needUpdateData){
 			return;
 		}
 		setNeedUpdateData(false);
-		if (btnSave.isVisible()) {
-			if (!isTeamInfoEmpty()) {
-				int dialogResult = JOptionPane.showConfirmDialog(null,
-						"Data have been changed. Do you want to save changes?",
-						"Do you want to save changes?",
+		if(btnSave.isVisible()){
+			if(!isTeamInfoEmpty()){
+				int dialogResult = JOptionPane.showConfirmDialog (null, 
+						"Data have been changed. Do you want to save changes?", 
+						"Do you want to save changes?", 
 						JOptionPane.YES_NO_CANCEL_OPTION);
-				if (dialogResult == JOptionPane.CANCEL_OPTION) {
+	    		if(dialogResult == JOptionPane.CANCEL_OPTION){
 					return;
-				} else if (dialogResult == JOptionPane.YES_OPTION) {
-					if (checkValid()) {
-						customTableModel.saveData(txtTeamName.getText(),
-								txtStadium.getText(), tableModelTeamList);
+				}
+	    		else if(dialogResult == JOptionPane.YES_OPTION){
+	    			if(checkValid()){
+	    				customTableModel.saveData(txtTeamName.getText(),
+		    					txtStadium.getText(), tableModelTeamList);
 						System.out.println("Saved Successful");
-					} else {
-
-						return;
-					}
-
+	    			}
+	    			else{
+	    				
+	    				return;
+	    			}
+	    			
 				}
 			}
-
-		}
+    		
+    	}		
 		customTableModel.clearNullPlayer();
 		updateTableModelTeamList();
 		btnSave.setVisible(false);
 		super.dispose();
 	}
-
-	private boolean checkValid() {
+	
+	private boolean checkValid(){
 		String msg = customTableModel.isValid();
-		if (msg != null) {
+		if(msg != null){
 			JOptionPane.showMessageDialog(null, msg);
 			return false;
 		}
@@ -78,18 +79,18 @@ public class FootballTeamInfoDialog extends JDialog {
 	private TablePanel tablePanel;
 	private FootballTeamListTable tableModelTeamList;
 	private Team team;
-
+	
 	public FootballTeamInfoDialog(Team team, FootballTeamListTable tableModelTeamList) {
 		this.tableModelTeamList = tableModelTeamList;
 		addControls(team);
 	}
-
-	synchronized public void setNeedUpdateData(boolean b) {
+	
+	synchronized public void setNeedUpdateData(boolean b){
 		needUpdateData = b;
 	}
-
+	
 	private void addControls(Team t) {
-		// System.out.println("is null: " + t == null);
+//		System.out.println("is null: " + t == null);
 		this.team = t;
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setTitle("Team Profile");
@@ -142,18 +143,18 @@ public class FootballTeamInfoDialog extends JDialog {
 				{
 					btnAdd = new JButton(new ImageIcon("resources/add.png"));
 					btnAdd.setToolTipText("Add a new player");
-					btnAdd.setFocusPainted(false);
+					btnAdd.setFocusPainted( false );
 					panel_1.add(btnAdd);
 				}
 				{
 					btnSave = new JButton(new ImageIcon("resources/save.png"));
 					btnSave.setToolTipText("Save changes");
-					btnSave.setFocusPainted(false);
+					btnSave.setFocusPainted( false );
 					panel_1.add(btnSave);
 				}
 				btnEdit = new JButton("Edit", new ImageIcon("resources/edit.png"));
 				btnEdit.setToolTipText("Edit Football team information");
-				btnEdit.setFocusPainted(false);
+				btnEdit.setFocusPainted( false );
 				panel_1.add(btnEdit);
 				btnAdd.setVisible(false);
 				btnSave.setVisible(false);
@@ -162,19 +163,20 @@ public class FootballTeamInfoDialog extends JDialog {
 		{
 			tablePanel = new TablePanel(TablePanel.FOOTBALL_TEAM_PROFILE_TABLE);
 			contentPanel.add(tablePanel, BorderLayout.CENTER);
-			customTableModel = ((FootballTeamProfileTable) tablePanel.getTblModel());
+			customTableModel = ((FootballTeamProfileTable)tablePanel.getTblModel());
 			customTableModel.setTeam(t);
 			customTableModel.getData();
 			customTableModel.setEnable(false);
 			txtTeamName.setEnabled(false);
 			txtStadium.setEnabled(false);
-			if (team != null) {
+			if(team != null){
 				txtTeamName.setText(team.getName());
 				txtStadium.setText(team.getHome_stadium());
 			}
-
+			
+			
 			btnAdd.addActionListener(new ActionListener() {
-
+				
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					tablePanel.addEmptyRow(1);
@@ -184,15 +186,15 @@ public class FootballTeamInfoDialog extends JDialog {
 				}
 			});
 			btnSave.addActionListener(new ActionListener() {
-
+				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if (isTeamInfoEmpty()) {
+					if(isTeamInfoEmpty()){
 						JOptionPane.showMessageDialog(null,
 								"Vui lòng không để trống trường thông tin nào");
 						return;
 					}
-					if (!checkValid()) {
+					if(!checkValid()){
 						return;
 					}
 					customTableModel.setEnable(false);
@@ -202,27 +204,24 @@ public class FootballTeamInfoDialog extends JDialog {
 					btnSave.setVisible(false);
 					txtTeamName.setEnabled(false);
 					txtStadium.setEnabled(false);
-					// HashMap<String, Integer> idList = customTableModel.getIdList();
+//					HashMap<String, Integer> idList = customTableModel.getIdList();
 					saveTeam();
-					// JTable table = tablePanel.getTable();
-					// for (int i = 0; i < table.getRowCount(); i++) {
-					// if(!isEmptyRow(i)){
-					// String typeOfPlayerStr = (String) table.getValueAt(i, 3);
-					// System.out.println(table.getValueAt(i, 1) + " "
-					// + table.getValueAt(i, 2) + " ;"
-					// + table.getValueAt(i, 3) + "; "
-					// + idList.get(typeOfPlayerStr));
-					// }
-					//
-					// }
-					((ReportPanel) (UpdateTabData.panelList
-							.get(StartProgram.REPORT_TAB))).getLeaderboardPanel();
-					((ReportPanel) (UpdateTabData.panelList
-							.get(StartProgram.REPORT_TAB))).getPlayerListPanel();
+//					JTable table = tablePanel.getTable();
+//					for (int i = 0; i < table.getRowCount(); i++) {
+//						if(!isEmptyRow(i)){
+//							String typeOfPlayerStr = (String) table.getValueAt(i, 3);
+//							System.out.println(table.getValueAt(i, 1) + " "
+//									+ table.getValueAt(i, 2) + " ;"
+//									+ table.getValueAt(i, 3) + "; "
+//									+ idList.get(typeOfPlayerStr));
+//						}
+//						
+//					}
+					
 				}
 			});
 			btnEdit.addActionListener(new ActionListener() {
-
+				
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					customTableModel.setEnable(true);
@@ -232,52 +231,53 @@ public class FootballTeamInfoDialog extends JDialog {
 					btnEdit.setVisible(false);
 					txtTeamName.setEnabled(true);
 					txtStadium.setEnabled(true);
-
+					
 				}
 			});
-
+			
 		}
 		setLocationRelativeTo(null);
 	}
 
-	private boolean isEmptyRow(int i) {
+	private boolean isEmptyRow(int i){
 		JTable table = tablePanel.getTable();
-		if (table.getValueAt(i, 1).toString().trim().isEmpty()
+		if(table.getValueAt(i, 1).toString().trim().isEmpty() 
 				|| table.getValueAt(i, 3).toString().isEmpty()
-				|| tablePanel.getTable().getValueAt(i, 2) == null) {
+				|| tablePanel.getTable().getValueAt(i, 2) == null){
 			return true;
 		}
 		return false;
 	}
-
-	private void updateTableModelTeamList() {
+	
+	private void updateTableModelTeamList(){
 		int selectedIndex = tableModelTeamList.getTable().getSelectedRow();
-
-		if (team == null && customTableModel.getTeamOriginal() == null) {
+		
+		if(team == null && customTableModel.getTeamOriginal() == null){
 			tableModelTeamList.getDtm().removeRow(
 					selectedIndex);
-			// System.out.println("229: null FootbalTeamInfoDialog");
-		} else {
+//			System.out.println("229: null FootbalTeamInfoDialog");
+		}
+		else{
 			team = customTableModel.getTeamOriginal();
 			tableModelTeamList.getDtm().setValueAt(
 					team.getName(), selectedIndex, 1);
 			tableModelTeamList.getDtm().setValueAt(
 					team.getHome_stadium(), selectedIndex, 2);
-			// System.out.println("237: FootbalTeamInfoDialog");
+//			System.out.println("237: FootbalTeamInfoDialog");
 		}
 	}
-
-	private void saveTeam() {
-		customTableModel.saveData(txtTeamName.getText(),
+	
+	private void saveTeam(){
+		customTableModel.saveData(txtTeamName.getText(), 
 				txtStadium.getText(),
 				tableModelTeamList);
 	}
-
-	private boolean isTeamInfoEmpty() {
+	
+	private boolean isTeamInfoEmpty(){
 		validInput();
-		if (txtStadium.getText().length() <= 0 ||
+		if(txtStadium.getText().length() <= 0 ||
 				txtTeamName.getText().length() <= 0 ||
-				isPlayerInfoEmpty()) {
+				isPlayerInfoEmpty()){
 			return true;
 		}
 		return false;
@@ -286,22 +286,22 @@ public class FootballTeamInfoDialog extends JDialog {
 	private boolean isPlayerInfoEmpty() {
 		int last = tablePanel.getTable().getRowCount();
 		for (int i = 0; i < last; i++) {
-			if (isEmptyRow(i)) {
+			if(isEmptyRow(i)){
 				return true;
 			}
 		}
 		return false;
 	}
-
-	private void validInput() {
+	
+	private void validInput(){
 		txtStadium.setText(txtStadium.getText().toString().trim());
 		txtTeamName.setText(txtTeamName.getText().toString().trim());
 		for (int i = 0; i < tablePanel.getTable().getRowCount(); i++) {
 			tablePanel.getTable().setValueAt(
-					tablePanel.getTable().getValueAt(i, 1).toString().trim(),
+					tablePanel.getTable().getValueAt(i, 1).toString().trim(), 
 					i, 1);
 			tablePanel.getTable().setValueAt(
-					tablePanel.getTable().getValueAt(i, 4).toString().trim(),
+					tablePanel.getTable().getValueAt(i, 4).toString().trim(), 
 					i, 4);
 		}
 	}

@@ -3,13 +3,14 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 24, 2022 at 06:42 AM
+-- Generation Time: May 02, 2022 at 05:44 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
+
 
 CREATE DATABASE `qlbd` CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `qlbd`;
@@ -39,6 +40,7 @@ CREATE TABLE `leaderboard` (
 --
 
 INSERT INTO `leaderboard` (`id`, `time`) VALUES
+(0000000000, '2022-01-01 00:00:00'),
 (0000000001, '2022-04-24 00:00:00'),
 (0000000002, '2022-04-24 00:00:00'),
 (0000000003, '2022-04-24 00:00:00'),
@@ -106,8 +108,7 @@ INSERT INTO `player` (`id`, `name`, `dob`, `note`, `id_type`, `id_team`, `total_
 (0000000007, 'Cầu thủ G', '2001-04-01', '', 0000000001, 0000000002, 0000000000),
 (0000000008, 'Cầu thủ H', '2001-04-21', '', 0000000001, 0000000002, 0000000000),
 (0000000010, 'Cầu thủ BC', '2001-04-05', '', 0000000001, 0000000001, 0000000000),
-(0000000011, 'Cầu thủ DC', '2001-04-07', '', 0000000001, 0000000001, 0000000000),
-(0000000020, 'Cầu thủ 1F', '2001-10-18', '', 0000000001, 0000000001, 0000000000);
+(0000000011, 'Cầu thủ DC', '2001-04-07', '', 0000000001, 0000000001, 0000000000);
 
 -- --------------------------------------------------------
 
@@ -164,14 +165,14 @@ CREATE TABLE `regulation` (
 INSERT INTO `regulation` (`id`, `name`, `type`, `value`, `status`) VALUES
 (0000000001, 'Tuổi tối thiểu của cầu thủ', 'int', '16', 1),
 (0000000002, 'Tuổi tối đa của cầu thủ', 'int', '40', 1),
-(0000000003, 'Số lượng cầu thủ tối thiểu', 'int', '2', 1),
+(0000000003, 'Số lượng cầu thủ tối thiểu', 'int', '15', 1),
 (0000000004, 'Số lượng cầu thủ tối đa', 'int', '22', 1),
 (0000000005, 'Số lượng cầu thủ nước ngoài tối đa', 'int', '3', 1),
 (0000000006, 'Thời điểm ghi bàn tối đa', 'int', '96', 1),
 (0000000007, 'Điểm thắng', 'int', '3', 1),
 (0000000008, 'Điểm hoà', 'int', '1', 1),
 (0000000009, 'Điểm thua', 'int', '0', 1),
-(0000000010, 'Số lượng các loại bàn thắng', 'int', '2', 1);
+(0000000010, 'Số lượng các loại bàn thắng', 'int', '3', 1);
 
 -- --------------------------------------------------------
 
@@ -221,6 +222,29 @@ INSERT INTO `result_detail` (`id`, `id_result`, `id_player`, `id_type_of_goal`, 
 (0000000021, 0000000011, 0000000008, 0000000001, 0000000014),
 (0000000022, 0000000011, 0000000005, 0000000001, 0000000016);
 
+--
+-- Triggers `result_detail`
+--
+DELIMITER $$
+CREATE TRIGGER `changeTotalGoalAfterDelete` AFTER DELETE ON `result_detail` FOR EACH ROW BEGIN
+UPDATE player SET total_goal = total_goal - 1 where id = old.id_player;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `changeTotalGoalAfterInsert` AFTER INSERT ON `result_detail` FOR EACH ROW BEGIN
+UPDATE player SET total_goal = total_goal + 1 where id = new.id_player;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `changeTotalGoalAfterUpdate` AFTER UPDATE ON `result_detail` FOR EACH ROW BEGIN
+UPDATE player SET total_goal = total_goal - 1 where id = old.id_player;
+        UPDATE player SET total_goal = total_goal + 1 where id = new.id_player;
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -261,7 +285,7 @@ INSERT INTO `team` (`id`, `name`, `home_stadium`) VALUES
 (0000000002, 'Đội bóng 2', 'Sân đội 2'),
 (0000000003, 'Đội bóng 3', 'Sân đội 3'),
 (0000000004, 'Đội bóng 4', 'Sân đội 4'),
-(0000000005, 'Đội bóng 5', 'Sân đội 5');
+(0000000005, 'Đội bóng 5E', 'Sân đội 5');
 
 -- --------------------------------------------------------
 
@@ -275,29 +299,11 @@ CREATE TABLE `team_leaderboard` (
   `total_win` int(10) UNSIGNED ZEROFILL NOT NULL,
   `total_defeat` int(10) UNSIGNED ZEROFILL NOT NULL,
   `total_tire` int(10) UNSIGNED ZEROFILL NOT NULL,
-  `difference` int(10) SIGNED,
+  `difference` int(11) DEFAULT NULL,
   `rank` int(10) UNSIGNED NOT NULL,
   `rank_score` int(10) UNSIGNED ZEROFILL NOT NULL,
   `total_goal` int(10) UNSIGNED ZEROFILL NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `team_leaderboard`
---
-
-INSERT INTO `team_leaderboard` (`id_leaderboard`, `id_team`, `total_win`, `total_defeat`, `total_tire`, `difference`, `rank`, `rank_score`, `total_goal`) VALUES
-(0000000001, 0000000002, 0000000002, 0000000000, 0000000000, 0000000002, 1, 0000000006, 0000000000),
-(0000000001, 0000000004, 0000000000, 0000000000, 0000000001, 0000000000, 2, 0000000001, 0000000000),
-(0000000002, 0000000002, 0000000002, 0000000000, 0000000000, 0000000002, 1, 0000000006, 0000000000),
-(0000000002, 0000000004, 0000000000, 0000000000, 0000000001, 0000000000, 2, 0000000001, 0000000000),
-(0000000003, 0000000002, 0000000002, 0000000000, 0000000000, 0000000002, 1, 0000000006, 0000000000),
-(0000000003, 0000000004, 0000000000, 0000000000, 0000000001, 0000000000, 2, 0000000001, 0000000000),
-(0000000004, 0000000002, 0000000002, 0000000000, 0000000000, 0000000002, 1, 0000000006, 0000000000),
-(0000000004, 0000000004, 0000000000, 0000000000, 0000000001, 0000000000, 2, 0000000001, 0000000000),
-(0000000005, 0000000002, 0000000002, 0000000000, 0000000000, 0000000002, 1, 0000000006, 0000000000),
-(0000000005, 0000000004, 0000000000, 0000000000, 0000000001, 0000000000, 2, 0000000001, 0000000000),
-(0000000006, 0000000002, 0000000002, 0000000000, 0000000000, 0000000002, 1, 0000000006, 0000000000),
-(0000000006, 0000000004, 0000000000, 0000000000, 0000000001, 0000000000, 2, 0000000001, 0000000000);
 
 -- --------------------------------------------------------
 
@@ -452,7 +458,7 @@ ALTER TABLE `match_schedule`
 -- AUTO_INCREMENT for table `player`
 --
 ALTER TABLE `player`
-  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `priority`
@@ -476,7 +482,7 @@ ALTER TABLE `result`
 -- AUTO_INCREMENT for table `result_detail`
 --
 ALTER TABLE `result_detail`
-  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `round`

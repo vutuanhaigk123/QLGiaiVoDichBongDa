@@ -1,15 +1,22 @@
 package viewmodel;
 
+import java.sql.Date;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Vector;
 
-import database.DBConnector;
-import database.DBTeamLeaderboardDetail;
+import model.Team;
 import model.TeamLeaderboard;
+import model.TeamLeaderboardDetail;
+import database.DBConnector;
+import database.DBTeam;
+import database.DBTeamLeaderboardDetail;
 
-public class LeaderboardTable extends TableModel {
+public class LeaderboardTable extends TableModel{
 
-	public LeaderboardTable() {
+	private TeamLeaderboard teamLeaderboard;
+	
+	public LeaderboardTable(){
 		super();
 		dtm.addColumn("STT");
 		dtm.addColumn("Đội");
@@ -18,93 +25,97 @@ public class LeaderboardTable extends TableModel {
 		dtm.addColumn("Thua");
 		dtm.addColumn("Hiệu số");
 		dtm.addColumn("Hạng");
+		
+		teamLeaderboard = new TeamLeaderboard();
 
-		table.setDefaultEditor(Object.class, null);
-
-		// for (int i = 0; i < 10; i++) {
-		// Vector<Object> v = new Vector<>();
-		// v.add(i);
-		// v.add(i);
-		// v.add(i);
-		// v.add(i);
-		// v.add(i);
-		// v.add(i);
-		// v.add(i);
-		// dtm.addRow(v);
-		// }
-
-		// super.addEmptyRow(10);
-		// tblPkg.setAutoCreateRowSorter(true);
-		// TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(dtm);
-		// tblPkg.setRowSorter(sorter);
-		// tblPkg.getRowSorter().toggleSortOrder(0);
+		//tblPkg.setAutoCreateRowSorter(true);
+//		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(dtm);
+//		tblPkg.setRowSorter(sorter);
+//		tblPkg.getRowSorter().toggleSortOrder(0);
 		// Prevent manager edit this table
-		// tblPkg.setDefaultEditor(Object.class, null);
-		// tblPkg.addMouseListener(new MouseListener() {
-		//
-		// @Override
-		// public void mouseReleased(MouseEvent e) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		//
-		// @Override
-		// public void mousePressed(MouseEvent e) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		//
-		// @Override
-		// public void mouseExited(MouseEvent e) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		//
-		// @Override
-		// public void mouseEntered(MouseEvent e) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		//
-		// @Override
-		// public void mouseClicked(MouseEvent e) {
-		// if (e.getClickCount() == 2) { // to detect doble click events
-		//// JTable target = (JTable)e.getSource();
-		//// int row = target.getSelectedRow(); // select a row
-		//// int column = target.getSelectedColumn(); // select a column
-		//// JOptionPane.showMessageDialog(null,
-		//// tblPkg.getValueAt(row, column) + " hiện dialog nữa"); // get the value of a
-		// row and column.
-		// FootballTeamInfoDialog f = new FootballTeamInfoDialog();
-		// f.setModal(true);
-		// f.setVisible(true);
-		// }
-		// }
-		// });
-
-		showLeaderboard();
-
+//		tblPkg.setDefaultEditor(Object.class, null);
+		
 	}
-
-	public void showLeaderboard() {
+	
+	public void showData(Date time){
 		try {
-			DBTeamLeaderboardDetail.getAllTeam(DBConnector.getInstance());
-			dtm.setRowCount(0);
-			for (int i = 0; i < TeamLeaderboard.teamLeaderboardList.size(); i++) {
-				Vector<Object> p = new Vector<>();
-				p.add(table.getRowCount() + 1);
-				p.add(TeamLeaderboard.teamLeaderboardList.get(i).getTeam().getName());
-				p.add(TeamLeaderboard.teamLeaderboardList.get(i).getTotalWin());
-				p.add(TeamLeaderboard.teamLeaderboardList.get(i).getTotalTire());
-				p.add(TeamLeaderboard.teamLeaderboardList.get(i).getTotalDefeat());
-				p.add(TeamLeaderboard.teamLeaderboardList.get(i).getDifference());
-				p.add(TeamLeaderboard.teamLeaderboardList.get(i).getRank());
-				dtm.addRow(p);
+			if(DBTeamLeaderboardDetail.findIdLeaderboardByTime(
+					DBConnector.getInstance(), time) != -1){
+
+				System.out.println("Da ton tai");
+			}
+			else {
+				System.out.println("Chua ton tai");
+				HashMap<Integer, Team> idTeamList = new HashMap<Integer, Team>();
+				Vector<TeamLeaderboardDetail> teamList = getAllTeamList(idTeamList, time);
+				
+				teamLeaderboard.setTeamList(teamList);
+				teamLeaderboard.sort(time);
+				dtm.setRowCount(0);
+				for (int i = 0; i < teamList.size(); i++) {
+					Vector<Object> row = new Vector<Object>();
+					row.add(i + 1);
+					row.add(idTeamList.get(teamList.get(i).getIdTeam()).getName());
+					row.add(teamList.get(i).getTotalWin());
+					row.add(teamList.get(i).getTotalTire());
+					row.add(teamList.get(i).getTotalDefeat());
+					row.add(teamList.get(i).getDifference());
+					row.add(teamList.get(i).getRank());
+					dtm.addRow(row);
+				}
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private Vector<TeamLeaderboardDetail> getAllTeamList(
+			HashMap<Integer, Team> idTeamList, 
+			Date time){
+
+		Vector<TeamLeaderboardDetail> teamList = new Vector<TeamLeaderboardDetail>();
+		try {
+			Vector<Team> teams = DBTeam.getAllTeam(DBConnector.getInstance());
+			for (int i = 0; i < teams.size(); i++) {
+				idTeamList.put(teams.get(i).getId(), teams.get(i));
+				int totalWin = DBTeamLeaderboardDetail.countTotal(
+						DBConnector.getInstance(),
+						DBTeamLeaderboardDetail.COUNT_TOTAL_WIN,
+						teams.get(i).getId(), time);
+				int totalDefeat = DBTeamLeaderboardDetail.countTotal(
+						DBConnector.getInstance(),
+						DBTeamLeaderboardDetail.COUNT_TOTAL_DEFEAT,
+						teams.get(i).getId(), time);
+				int totalTire = DBTeamLeaderboardDetail.countTotal(
+						DBConnector.getInstance(),
+						DBTeamLeaderboardDetail.COUNT_TOTAL_TIRE,
+						teams.get(i).getId(), time);
+				int difference = DBTeamLeaderboardDetail.countTotal(
+						DBConnector.getInstance(),
+						DBTeamLeaderboardDetail.COUNT_TOTAL_DIFFERENCE,
+						teams.get(i).getId(), time);
+				int totalGoal = DBTeamLeaderboardDetail.countTotalGoal(DBConnector.getInstance(), 
+						teams.get(i).getId(), 
+						time);
+				TeamLeaderboardDetail temp = new TeamLeaderboardDetail(
+						teams.get(i).getId(), 
+						totalWin, 
+						totalDefeat, 
+						totalTire, 
+						difference, 
+						-1, 
+						-1, 
+						totalGoal);
+				temp.updateInfo(); // update rankScore
+				teamList.add(temp);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return teamList;
 	}
 
 	@Override
@@ -116,13 +127,13 @@ public class LeaderboardTable extends TableModel {
 	@Override
 	public void addEmptyObject() {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void deleteObject(int modelRow) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -134,6 +145,6 @@ public class LeaderboardTable extends TableModel {
 	@Override
 	public void showErrDelete() {
 		// TODO Auto-generated method stub
-
+		
 	}
 }
