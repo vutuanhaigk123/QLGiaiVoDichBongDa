@@ -1,5 +1,6 @@
 package viewmodel;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Vector;
@@ -7,6 +8,7 @@ import java.util.Vector;
 import model.Player;
 import database.DBConnector;
 import database.DBPlayer;
+import database.DBTeamLeaderboardDetail;
 
 public class FootballPlayerListTable extends TableModel{
 	
@@ -59,6 +61,7 @@ public class FootballPlayerListTable extends TableModel{
 				p.add(playerList.get(i).getTotal_goal());
 				dtm.addRow(p);
 			}
+			DBTeamLeaderboardDetail.getAllPlayers(DBConnector.getInstance(), new Date(new java.util.Date().getTime()));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
